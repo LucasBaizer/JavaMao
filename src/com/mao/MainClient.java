@@ -11,7 +11,7 @@ public class MainClient {
 		}
 		
 		Player player = new Player();
-		player.initialize("Negro");
+		player.initialize("Lucas");
 
 		Debug.log("Hello, my name is " + player.getUsername() + "!");
 
