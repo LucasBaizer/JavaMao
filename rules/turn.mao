@@ -1,4 +1,4 @@
-[CardPlaced] => {
+Event::CardPlaced => {
 	if(Player not ActualPlayer) {
 		//return the card to the player
 		push card -> Player

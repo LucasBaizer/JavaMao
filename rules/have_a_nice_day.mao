@@ -1,4 +1,4 @@
-[CardPlaced] => {
+Event::CardPlaced {
 	//if the card is a seven
 	if(face(card) is SEVEN) {
 		//is the last three cards were sevens

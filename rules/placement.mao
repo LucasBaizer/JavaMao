@@ -1,4 +1,4 @@
-[CardPlaced] => {
+Event::CardPlaced {
 	//if the face of the card is the same as the card below it, exit
 	if(face(card) is face(below(1)) {
 		exit
