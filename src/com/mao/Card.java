@@ -28,4 +28,18 @@ public class Card implements Serializable {
 	public Face getFace() {
 		return this.face;
 	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (obj instanceof Card) {
+			Card card = (Card) obj;
+			return card.suit == suit && card.face == face;
+		}
+		return false;
+	}
+
+	@Override
+	public String toString() {
+		return face.name().toLowerCase() + " of " + suit.name().toLowerCase();
+	}
 }

@@ -1,5 +1,7 @@
 package com.mao;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 
@@ -36,14 +38,24 @@ public abstract class Network {
 	private HashMap<Integer, List<NetworkedObject>> networkedObjects = new HashMap<>();
 
 	protected abstract void onInitialize();
-	
+
 	public abstract void makeUpdate(NetworkedObject object);
 
 	public void registerObject(NetworkedObject obj) {
-		this.networkedObjects.get(obj.getNetworkID()).add(obj);
+		List<NetworkedObject> list = networkedObjects.get(obj.getNetworkID());
+		if (list == null) {
+			ArrayList<NetworkedObject> l = new ArrayList<>();
+			networkedObjects.put(obj.getNetworkID(), l);
+			list = l;
+		}
+		list.add(obj);
 	}
 
 	public List<NetworkedObject> getObjects(int objectID) {
 		return networkedObjects.get(objectID);
+	}
+
+	public Collection<List<NetworkedObject>> getRegisteredObjects() {
+		return networkedObjects.values();
 	}
 }

@@ -1,11 +1,23 @@
 package com.mao;
 
-public interface NetworkedObject {
-	public int getNetworkID();
+public abstract class NetworkedObject {
+	private long uniqueID;
 	
-	public int getNetworkedObjectsCount();
+	public abstract int getNetworkID();
 	
-	public NetworkedData writeNetworkedData();
+	public abstract NetworkedData writeNetworkedData();
 	
-	public void readNetworkedData(NetworkedData data);
+	public abstract void readNetworkedData(NetworkedData data);
+
+	public long getUniqueID() {
+		return uniqueID;
+	}
+
+	public void setUniqueID(long uniqueID) {
+		this.uniqueID = uniqueID;
+	}
+	
+	public void update() {
+		Network.getNetwork().makeUpdate(this);
+	}
 }

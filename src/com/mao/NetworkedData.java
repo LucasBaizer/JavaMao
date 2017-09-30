@@ -6,6 +6,7 @@ import java.util.Arrays;
 import java.util.List;
 
 public class NetworkedData {
+	private int size;
 	private ArrayList<Serializable> data = new ArrayList<>();
 	
 	public NetworkedData() {
@@ -13,10 +14,12 @@ public class NetworkedData {
 
 	public NetworkedData(Serializable... data) {
 		this.data.addAll(Arrays.asList(data));
+		this.size = this.data.size();
 	}
 
 	public void write(Serializable obj) {
 		data.add(obj);
+		size = data.size();
 	}
 
 	/**
@@ -29,6 +32,15 @@ public class NetworkedData {
 	}
 
 	public List<Serializable> getData() {
-		return this.data;
+		return data;
+	}
+	
+	public int getObjectsCount() {
+		return size;
+	}
+	
+	@Override
+	public String toString() {
+		return data.toString();
 	}
 }

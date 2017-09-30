@@ -1,7 +1,7 @@
 package com.mao;
 
 public enum Suit {
-	JACKS(false), CLUBS(false), HEARTS(true), DIAMONDS(true);
+	SPADES(false), CLUBS(false), HEARTS(true), DIAMONDS(true);
 
 	private boolean red;
 
