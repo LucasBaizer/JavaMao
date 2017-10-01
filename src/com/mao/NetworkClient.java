@@ -38,7 +38,7 @@ public class NetworkClient extends Network {
 						for (int i = 3; i < 3 + netObjects; i++) {
 							data.write(in.getObjects()[i]);
 						}
-						
+
 						for (NetworkedObject obj : Network.getNetworkClient().getObjects(netID)) {
 							if (obj.getUniqueID() == uniqueID) {
 								Debug.log("Updating incoming object of type " + obj.getClass().getSimpleName() + ".");
@@ -51,14 +51,16 @@ public class NetworkClient extends Network {
 					} else if (in.getMessage().equals("REGISTER_OBJECT")) {
 						NetworkedObject object = (NetworkedObject) ((Class<? extends NetworkedObject>) in
 								.getObjects()[0]).newInstance();
-						if(object instanceof Game) {
+						if (object instanceof Game) {
 							Game.setGame((Game) object);
+						} else if(object instanceof RuleHandler) {
+							RuleHandler.setRuleHandler((RuleHandler) object);
 						}
 						object.setUniqueID((long) in.getObjects()[1]);
 						registerUnsharedObject(object);
 						Debug.log("Registered incoming object of type " + object.getClass().getSimpleName() + ".");
 					}
-				} catch(SocketException | EOFException e) {
+				} catch (SocketException | EOFException e) {
 					Debug.error("Server forcefully closed connection, exiting!");
 					System.exit(-1);
 				} catch (Exception e) {

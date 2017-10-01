@@ -1,12 +1,13 @@
-Event::CardPlaced => {
-	if(Player not ActualPlayer) {
-		//return the card to the player
-		push card -> Player
-		
-		//pop the stack of played cards so that the card has been given to the player
-		pop PlayedCards
-		
-		//additionally penalize the player
+Event::CardPlaced {
+	if(player not actualPlayer) {
+		push(pop(playedCards), player)
+		println("The card you played was returned.")
+		penalize "Out of turn."
+	}
+}
+
+Event::CardPulled {
+	if(player not actualPlayer) {
 		penalize "Out of turn."
 	}
 }

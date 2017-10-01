@@ -1,7 +1,9 @@
 package com.mao;
 
+import java.io.EOFException;
 import java.io.IOException;
 import java.io.Serializable;
+import java.net.SocketException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -77,6 +79,8 @@ public class NetworkServer extends Network {
 						Debug.log("Registered object of type " + object.getClass().getSimpleName() + ".");
 					}
 				}
+			} catch(SocketException | EOFException e) {
+				return;
 			} catch (Exception e) {
 				Debug.error("Error in client thread!", e);
 				return;

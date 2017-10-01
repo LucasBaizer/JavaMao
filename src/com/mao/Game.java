@@ -20,6 +20,7 @@ public class Game extends NetworkedObject {
 
 	private ArrayList<Card> playedCards = new ArrayList<>();
 	private Stack<Card> deck = new Stack<>();
+	private String currentPlayerUsername;
 
 	public static Game initialize() {
 		Game game = new Game();
@@ -27,7 +28,7 @@ public class Game extends NetworkedObject {
 		Network.getNetwork().registerObject(game);
 		return game;
 	}
-	
+
 	public static void setGame(Game game) {
 		inst = game;
 	}
@@ -45,6 +46,8 @@ public class Game extends NetworkedObject {
 		for (int i = 0; i < playedCards.size(); i++) {
 			data.write(playedCards.get(i));
 		}
+
+		data.write(currentPlayerUsername);
 
 		return data;
 	}
@@ -64,8 +67,15 @@ public class Game extends NetworkedObject {
 			playedCards.add(data.read());
 		}
 
-		Debug.log("Updated game. Top card is now the {0}. Deck now has {1} cards.",
+		currentPlayerUsername = data.read();
+
+		Debug.log("GAME: Updated game. Top card is now the {0}. Deck now has {1} cards.",
 				playedCards.get(playedCards.size() - 1), deck.size());
+		if (currentPlayerUsername != null) {
+			Debug.log("GAME: It is now {0}'s turn.", currentPlayerUsername);
+		} else {
+			Debug.log("GAME: Which player's turn it is has not been set yet.");
+		}
 	}
 
 	public List<Card> getPlayedCards() {
@@ -93,7 +103,15 @@ public class Game extends NetworkedObject {
 		return 0;
 	}
 
-	public void addCard(Card card) {
+	public void playCard(Card card) {
 		playedCards.add(card);
+	}
+
+	public String getCurrentPlayerUsername() {
+		return currentPlayerUsername;
+	}
+
+	public void setCurrentPlayerUsername(String currentPlayerUsername) {
+		this.currentPlayerUsername = currentPlayerUsername;
 	}
 }

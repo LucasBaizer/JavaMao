@@ -2,7 +2,7 @@ package com.mao;
 
 import java.io.Serializable;
 
-public class Card implements Serializable {
+public class Card implements Serializable, Comparable<Card> {
 	private static final long serialVersionUID = 5510774449741346517L;
 	private Suit suit;
 	private Face face;
@@ -14,6 +14,11 @@ public class Card implements Serializable {
 
 	public static Card of(Face face, Suit suit) {
 		return new Card(face, suit);
+	}
+
+	public static Card of(String name) {
+		String[] split = name.split(" of ");
+		return new Card(Face.valueOf(split[0].toUpperCase()), Suit.valueOf(split[1].toUpperCase()));
 	}
 
 	public static Card getRandomCard() {
@@ -57,5 +62,10 @@ public class Card implements Serializable {
 	@Override
 	public String toString() {
 		return face.name().toLowerCase() + " of " + suit.name().toLowerCase();
+	}
+
+	@Override
+	public int compareTo(Card o) {
+		return this.face.ordinal() - o.face.ordinal();
 	}
 }

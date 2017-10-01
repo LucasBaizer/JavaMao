@@ -46,11 +46,57 @@ public class Player extends NetworkedObject {
 		hand.add(card);
 	}
 
+	public void removeCard(Card card) {
+		hand.remove(card);
+	}
+
 	public List<Card> getHand() {
 		return hand;
 	}
 
 	public String getUsername() {
 		return username;
+	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((username == null) ? 0 : username.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj) {
+			return true;
+		}
+		if (obj == null) {
+			return false;
+		}
+		if (!(obj instanceof Player)) {
+			return false;
+		}
+		Player other = (Player) obj;
+		if (username == null) {
+			if (other.username != null) {
+				return false;
+			}
+		} else if (!username.equals(other.username)) {
+			return false;
+		}
+		return true;
+	}
+
+	public static Player getCurrentTurnPlayer() {
+		if (Game.getGame().getCurrentPlayerUsername() != null) {
+			for (NetworkedObject obj : Network.getNetwork().getObjects(1)) {
+				Player player = (Player) obj;
+				if (player.username.equals(Game.getGame().getCurrentPlayerUsername())) {
+					return player;
+				}
+			}
+		}
+		return null;
 	}
 }

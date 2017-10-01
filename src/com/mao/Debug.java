@@ -15,7 +15,7 @@ public class Debug {
 	public static void log(Object msg, Object... values) {
 		String str = msg.toString();
 		for (int i = 0; i < values.length; i++) {
-			str = str.replace("{" + i + "}", values[i].toString());
+			str = str.replace("{" + i + "}", values[i] == null ? "null" : values[i].toString());
 		}
 		System.out.println(getPrefix() + "DEBUG: " + str);
 	}
