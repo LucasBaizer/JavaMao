@@ -11,7 +11,8 @@ import com.mao.lang.PenalizeCommand;
 import com.mao.lang.SayCommand;
 
 public class MainClient {
-	@SuppressWarnings("resource")
+	private static final Scanner in = new Scanner(System.in);
+
 	public static void main(String[] args) {
 		Network.initialize(new NetworkClient());
 
@@ -37,7 +38,6 @@ public class MainClient {
 		}
 		Game.getGame().update();
 
-		Scanner in = new Scanner(System.in);
 		while (true) {
 			System.out.print("> ");
 			String line = in.nextLine().toLowerCase().trim();
@@ -113,12 +113,20 @@ public class MainClient {
 				System.out.println("You were given the " + penalty + " as a penalty.");
 			} else if (response instanceof SayCommand) {
 				SayCommand say = (SayCommand) response;
-				System.out.println("Failure to say \"" + say.getPhrase() + "\"");
 
-				Card penalty = Game.getGame().getCardFromDeck();
-				player.addCard(penalty);
+				System.out.print("Got something to say?: ");
+				String userResponse = in.nextLine().toLowerCase().replaceAll(".", "").trim().replaceAll(" +", " ");
+				
+				String actual = say.getPhrase().toLowerCase().replaceAll(".", "").trim();
+				if (!(actual.contains(userResponse) && (Math.abs(actual.length() - userResponse.length()) <= 5))) {
+					//System.out.println("Failure to say \"" + say.getPhrase() + "\"");
+					System.out.println("Wrong saying.");
 
-				System.out.println("You were given the " + penalty + " as a penalty.");
+					Card penalty = Game.getGame().getCardFromDeck();
+					player.addCard(penalty);
+
+					System.out.println("You were given the " + penalty + " as a penalty."); 
+				}
 			}
 		}
 	}

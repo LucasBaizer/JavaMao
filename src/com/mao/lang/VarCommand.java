@@ -1,6 +1,7 @@
 package com.mao.lang;
 
 public class VarCommand extends Code {
+	private String name;
 	private String definition;
 
 	public VarCommand(CodeBlock parent, String definition, boolean constant) {
@@ -10,6 +11,8 @@ public class VarCommand extends Code {
 
 		String[] split = definition.split("=");
 		String name = split[0].trim();
+		
+		this.name = name;
 
 		Variable existing = getVariable(name);
 		if (split.length != 2) {
@@ -45,5 +48,13 @@ public class VarCommand extends Code {
 		}
 
 		return ExecutionResultBuilder.builder(this).successful().build();
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
 	}
 }

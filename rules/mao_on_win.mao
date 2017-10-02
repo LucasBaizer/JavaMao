@@ -1,5 +1,5 @@
 Event::CardPlaced {
-	if(cardCount(player) == 0) {
+	if(player::cardCount(player) == 0) {
 		say "Mao."
 	}
 }

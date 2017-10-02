@@ -19,6 +19,7 @@ public class ForLoop extends CodeBlock {
 			throw new CompilerError("The counter variable in a for loop must be mutable");
 		} else if (count.startsWith("var ")) {
 			toExecute = new VarCommand(this, count.split(" ", 2)[1], false);
+			counter = getVariable(toExecute.getName());
 		} else {
 			counter = (Variable) parseObtainable(split[0].trim());
 			if (counter.isConstant()) {

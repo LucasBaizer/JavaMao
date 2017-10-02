@@ -45,23 +45,23 @@ public class Event extends CodeBlock {
 		addVariable(new Variable("type::card", "Card").setConstant(true));
 		addVariable(new Variable("type::suit", "Suit").setConstant(true));
 		addVariable(new Variable("type::face", "Face").setConstant(true));
-		addMethod(new Method("face", (in) -> ((Card) in[0].obtain()).getFace()));
-		addMethod(new Method("suit", (in) -> ((Card) in[0].obtain()).getSuit()));
-		addMethod(new Method("below", (in) -> {
+		addMethod(new Method("face", 1, (in) -> ((Card) in[0]).getFace()));
+		addMethod(new Method("suit", 1, (in) -> ((Card) in[0]).getSuit()));
+		addMethod(new Method("below", 1, (in) -> {
 			return Game.getGame().getPlayedCards()
-					.get(Math.max(0, Game.getGame().getPlayedCards().size() - ((int) in[0].obtain() + 1)));
+					.get(Math.max(0, Game.getGame().getPlayedCards().size() - ((int) in[0] + 1)));
 		}));
-		addMethod(new Method("println", (in) -> {
-			System.out.println(in[0].obtain());
+		addMethod(new Method("println", 1, (in) -> {
+			System.out.println(in[0]);
 			return null;
 		}));
-		addMethod(new Method("pop", (in) -> {
-			List<?> list = (ArrayList<?>) in[0].obtain();
+		addMethod(new Method("pop", 1, (in) -> {
+			List<?> list = (ArrayList<?>) in[0];
 			return list.remove(list.size() - 1);
 		}));
-		addMethod(new Method("push", (params) -> {
-			Card card = (Card) params[0].obtain();
-			Object par1 = params[1].obtain();
+		addMethod(new Method("push", 2, (params) -> {
+			Card card = (Card) params[0];
+			Object par1 = params[1];
 			if (par1 instanceof Player) {
 				((Player) par1).addCard(card);
 			} else if (params[1] instanceof List<?>) {
@@ -72,44 +72,47 @@ public class Event extends CodeBlock {
 			}
 			return null;
 		}));
-		addMethod(new Method("cardCount", (in) -> {
-			return ((Player) in[0].obtain()).getHand().size();
+		addMethod(new Method("player::cardCount", 1, (in) -> {
+			return ((Player) in[0]).getHand().size();
 		}));
-		addMethod(new Method("sum", (in) -> {
+		addMethod(new Method("player::username", 1, (in) -> {
+			return ((Player) in[0]).getUsername();
+		}));
+		addMethod(new Method("sum", 2, (in) -> {
 			int total = 0;
-			for (Obtainable obtainable : in) {
-				total += (int) obtainable.obtain();
+			for (Object obtainable : in) {
+				total += (int) obtainable;
 			}
 			return total;
 		}));
-		addMethod(new Method("diff", (in) -> {
-			int total = (int) in[0].obtain();
+		addMethod(new Method("diff", 2, (in) -> {
+			int total = (int) in[0];
 			for (int i = 1; i < in.length; i++) {
-				total -= (int) in[i].obtain();
+				total -= (int) in[i];
 			}
 			return total;
 		}));
-		addMethod(new Method("mult", (in) -> {
+		addMethod(new Method("mult", 2, (in) -> {
 			int total = 1;
-			for (Obtainable obtainable : in) {
-				total *= (int) obtainable.obtain();
+			for (Object obtainable : in) {
+				total *= (int) obtainable;
 			}
 			return total;
 		}));
-		addMethod(new Method("div", (in) -> {
-			int total = (int) in[0].obtain();
+		addMethod(new Method("div", 2, (in) -> {
+			int total = (int) in[0];
 			for (int i = 1; i < in.length; i++) {
-				total /= (int) in[i].obtain();
+				total /= (int) in[i];
 			}
 			return total;
 		}));
-		addMethod(new Method("concat", (in) -> {
-			String target = (String) in[0].obtain();
-			String toConcat = (String) in[1].obtain();
+		addMethod(new Method("concat", 2, (in) -> {
+			String target = (String) in[0];
+			String toConcat = (String) in[1];
 			return target.concat(toConcat);
 		}));
-		addMethod(new Method("typeof", (in) -> {
-			return in[0].obtain().getClass().getSimpleName();
+		addMethod(new Method("typeof", 1, (in) -> {
+			return in[0].getClass().getSimpleName();
 		}));
 
 		parseChildren();
@@ -127,14 +130,16 @@ public class Event extends CodeBlock {
 			ExecutionResult result = child.execute();
 			if (result.isSuccessful()) {
 				if (result.shouldExitScript()) {
+					
+					
 					return result;
 				}
 			}
 		}
-
+		
 		return ExecutionResultBuilder.builder(this).successful().build();
 	}
-
+	
 	@Override
 	public String toString() {
 		return "Event::" + name;

@@ -13,15 +13,13 @@ public class DefinedFunction extends CodeBlock {
 
 		this.name = name;
 
-		List<Class<?>> types = new ArrayList<>();
 		for (String param : parameters.split(",")) {
 			Variable var = new Variable(param.trim()).setConstant(true);
 			params.add(var);
-			types.add(var.getValue().getClass()); //TODO fix
 			addVariable(var);
 		}
 
-		parent.addMethod(new Method(name, params.size(), types, (params) -> {
+		parent.addMethod(new Method(name, params.size(), (params) -> {
 			return run(params).getReturnValue();
 		}));
 
