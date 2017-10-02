@@ -78,6 +78,11 @@ public abstract class Code {
 
 					obtained.add(parseObtainable(params.substring(lastComma, params.length()).trim()));
 
+					if (method.getParameters() != obtained.size()) {
+						throw new CompilerError("Method " + methodName + " takes " + method.getParameters()
+								+ " parameters; " + obtained.size() + " were given");
+					}
+
 					return new MethodReference(method, obtained.toArray(new Obtainable[obtained.size()]));
 				}
 			}
