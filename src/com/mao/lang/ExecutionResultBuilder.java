@@ -33,6 +33,16 @@ public class ExecutionResultBuilder {
 		result.setShouldExitScript(true);
 		return this;
 	}
+	
+	public ExecutionResultBuilder shouldReturn() {
+		result.setShouldReturnMethod(true);
+		return this;
+	}
+	
+	public ExecutionResultBuilder returnValue(Object val) {
+		result.setReturnValue(val);
+		return this;
+	}
 
 	public ExecutionResult build() {
 		return result;

@@ -99,4 +99,21 @@ public class Player extends NetworkedObject {
 		}
 		return null;
 	}
+
+	public static Player getNextTurnPlayer() {
+		if (Game.getGame().getCurrentPlayerUsername() != null) {
+			List<NetworkedObject> objects = Network.getNetwork().getObjects(1);
+			for (int i = 0; i < objects.size(); i++) {
+				Player player = (Player) objects.get(i);
+				if (player.username.equals(Game.getGame().getCurrentPlayerUsername())) {
+					if (i + 1 == objects.size()) {
+						return (Player) objects.get(0);
+					} else {
+						return (Player) objects.get(i + 1);
+					}
+				}
+			}
+		}
+		return null;
+	}
 }

@@ -4,6 +4,8 @@ public class ExecutionResult {
 	private boolean successful;
 	private boolean exitScript;
 	private boolean breakLoop;
+	private boolean returnMethod;
+	private Object returnValue;
 	private Code source;
 
 	public boolean isSuccessful() {
@@ -20,6 +22,22 @@ public class ExecutionResult {
 
 	public void setShouldExitScript(boolean exitScript) {
 		this.exitScript = exitScript;
+	}
+
+	public boolean shouldReturnMethod() {
+		return returnMethod;
+	}
+
+	public void setShouldReturnMethod(boolean returnMethod) {
+		this.returnMethod = returnMethod;
+	}
+
+	public Object getReturnValue() {
+		return returnValue;
+	}
+
+	public void setReturnValue(Object returnValue) {
+		this.returnValue = returnValue;
 	}
 
 	public Code getSource() {
@@ -40,7 +58,8 @@ public class ExecutionResult {
 
 	@Override
 	public String toString() {
-		return "ExecutionResult[successful=" + successful + ",exitScript=" + exitScript + ",source="
+		return "ExecutionResult[successful=" + successful + ",exitScript=" + exitScript + ",breakLoop=" + breakLoop
+				+ ",returnMethod=" + returnMethod + ",returnValue=" + returnValue + ",source="
 				+ source.getClass().getSimpleName() + "]";
 	}
 }

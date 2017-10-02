@@ -29,7 +29,7 @@ public class MainClient {
 		for (int i = 0; i < 4; i++) {
 			player.addCard(Game.getGame().getCardFromDeck());
 		}
-		
+
 		player.update();
 		if (Game.getGame().getCurrentPlayerUsername() == null) {
 			Game.getGame().setCurrentPlayerUsername(player.getUsername());
@@ -69,28 +69,12 @@ public class MainClient {
 				player.removeCard(card);
 				Game.getGame().playCard(card);
 
-				for (Code response : RuleHandler.getRuleHandler().fire(Event.CARD_PLACED, player,
-						Player.getCurrentTurnPlayer(), card)) {
-					if (response instanceof PenalizeCommand) {
-						PenalizeCommand penalize = (PenalizeCommand) response;
-						System.out.println(penalize.getReason());
-
-						Card penalty = Game.getGame().getCardFromDeck();
-						player.addCard(penalty);
-
-						System.out.println("You were given the " + penalty + " as a penalty.");
-					} else if (response instanceof SayCommand) {
-						SayCommand say = (SayCommand) response;
-						System.out.println("Failure to say \"" + say.getPhrase() + "\"");
-						
-						Card penalty = Game.getGame().getCardFromDeck();
-						player.addCard(penalty);
-
-						System.out.println("You were given the " + penalty + " as a penalty.");
-					}
-				}
+				callEvent(player, card, Event.CARD_PLACED);
 
 				player.update();
+				if (player == Player.getCurrentTurnPlayer()) {
+					Game.getGame().setCurrentPlayerUsername(Player.getNextTurnPlayer().getUsername());
+				}
 				Game.getGame().update();
 			} else if (line.equals("pull") || line.equals("draw") || line.equals("take")) {
 				Card card = Game.getGame().getCardFromDeck();
@@ -98,7 +82,12 @@ public class MainClient {
 
 				System.out.println("You pulled the " + card + ".");
 
+				callEvent(player, card, Event.CARD_PULLED);
+
 				player.update();
+				if (player == Player.getCurrentTurnPlayer()) {
+					Game.getGame().setCurrentPlayerUsername(Player.getNextTurnPlayer().getUsername());
+				}
 				Game.getGame().update();
 			} else if (line.equals("turn")) {
 				System.out.println(
@@ -108,6 +97,29 @@ public class MainClient {
 				System.exit(0);
 			}
 			System.out.println();
+		}
+	}
+
+	private static void callEvent(Player player, Card card, String event) {
+		for (Code response : RuleHandler.getRuleHandler().fire(event, player, Player.getCurrentTurnPlayer(),
+				Player.getNextTurnPlayer(), card)) {
+			if (response instanceof PenalizeCommand) {
+				PenalizeCommand penalize = (PenalizeCommand) response;
+				System.out.println(penalize.getReason());
+
+				Card penalty = Game.getGame().getCardFromDeck();
+				player.addCard(penalty);
+
+				System.out.println("You were given the " + penalty + " as a penalty.");
+			} else if (response instanceof SayCommand) {
+				SayCommand say = (SayCommand) response;
+				System.out.println("Failure to say \"" + say.getPhrase() + "\"");
+
+				Card penalty = Game.getGame().getCardFromDeck();
+				player.addCard(penalty);
+
+				System.out.println("You were given the " + penalty + " as a penalty.");
+			}
 		}
 	}
 }

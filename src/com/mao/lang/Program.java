@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.util.ArrayList;
+import java.util.List;
 
 import com.mao.Debug;
 import com.mao.NetworkedData;
@@ -26,6 +27,10 @@ public class Program {
 			}
 		}
 		return null;
+	}
+
+	public List<Event> getRegisteredEvents() {
+		return events;
 	}
 
 	public boolean handlesEvent(String name) {
@@ -74,6 +79,14 @@ public class Program {
 		int currentIndex = -1;
 		while ((currentIndex = program.indexOf("global ", currentIndex + 1)) != -1) {
 			String global = program.substring(currentIndex, program.indexOf("\n", currentIndex + 1)).trim();
+
+			if (global.endsWith("{")) {
+				global = program.substring(currentIndex,
+						ParseUtilities.findClosingBracket(program.toCharArray(), program.indexOf("{", currentIndex))
+								+ 1)
+						.trim();
+			}
+
 			String def = global.substring(7);
 			prog.globals.add(def);
 		}

@@ -15,7 +15,7 @@ public class RuleHandler extends NetworkedObject {
 	public static RuleHandler getRuleHandler() {
 		return inst;
 	}
-	
+
 	public static void setRuleHandler(RuleHandler object) {
 		inst = object;
 	}
@@ -33,12 +33,12 @@ public class RuleHandler extends NetworkedObject {
 		rules.add(rule);
 	}
 
-	public List<Code> fire(String name, Player placer, Player shouldPlaced, Card card) {
+	public List<Code> fire(String name, Player placer, Player shouldPlaced, Player next, Card card) {
 		List<Code> responses = new ArrayList<>();
 		for (Program rule : rules) {
 			if (rule.handlesEvent(name)) {
 				Event event = rule.getEvent(name);
-				setupEvent(event, placer, shouldPlaced, card);
+				setupEvent(event, placer, shouldPlaced, next, card);
 
 				Code result = event.execute().getSource();
 				if (result instanceof SayCommand || result instanceof PenalizeCommand) {
@@ -49,10 +49,11 @@ public class RuleHandler extends NetworkedObject {
 		return responses;
 	}
 
-	private void setupEvent(Event event, Player placer, Player shouldPlaced, Card card) {
+	private void setupEvent(Event event, Player placer, Player shouldPlaced, Player next, Card card) {
 		event.getVariable("card").setValue(card);
 		event.getVariable("player").setValue(placer);
 		event.getVariable("actualPlayer").setValue(shouldPlaced);
+		event.getVariable("nextPlayer").setValue(next);
 		event.getVariable("playedCards").setValue(Game.getGame().getPlayedCards());
 	}
 
@@ -74,9 +75,10 @@ public class RuleHandler extends NetworkedObject {
 	@Override
 	public void readNetworkedData(NetworkedData data) {
 		rules.clear();
+
 		int rulesSize = data.read();
 		for (int i = 0; i < rulesSize; i++) {
-			rules.add(Program.readFromNetworkData(data));
+			addRule(Program.readFromNetworkData(data));
 		}
 		Debug.log("Rules updated. There are now " + rules.size() + " rules in effect.");
 	}

@@ -52,6 +52,11 @@ public abstract class CodeBlock extends Code {
 						String body = subBlock.substring(subBlock.indexOf("{") + 1, subBlock.length() - 1).trim();
 						addChild(subBlock.startsWith("if") ? new IfStatement(this, params, body)
 								: new ForLoop(this, params, body));
+					} else if (subBlock.startsWith("function")) {
+						String name = line.substring(line.indexOf(" "), line.indexOf("(")).trim();
+						String params = line.substring(line.indexOf("(") + 1, line.lastIndexOf(")")).trim();
+						String body = subBlock.substring(subBlock.indexOf("{") + 1, subBlock.length() - 1).trim();
+						addChild(new DefinedFunction(this, name, params, body));
 					} else {
 						throw new CompilerError("Unexpected block");
 					}
@@ -67,9 +72,13 @@ public abstract class CodeBlock extends Code {
 					} else if (command.equals("penalize")) {
 						addChild(new PenalizeCommand(parseObtainable(split[1].trim())));
 					} else if (command.equals("var")) {
-						addChild(new VarCommand(this, split[1]));
-					} else if(command.equals("break")) {
+						addChild(new VarCommand(this, split[1].trim(), false));
+					} else if (command.equals("const")) {
+						addChild(new VarCommand(this, split[1].trim(), true));
+					} else if (command.equals("break")) {
 						addChild(new BreakCommand());
+					} else if (command.equals("return")) {
+						addChild(new ReturnCommand(this, split.length == 1 ? null : split[1].trim()));
 					} else if (command.contains("(")) {
 						addChild(new CallMethodCommand((MethodReference) parseObtainable(line)));
 					} else if (line.contains("=")) {

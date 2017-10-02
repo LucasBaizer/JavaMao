@@ -18,7 +18,7 @@ public class MainServer {
 		RuleHandler handler = RuleHandler.initialize();
 		try {
 			handler.addRule(Program.compile(new File("rules/turn.mao")));
-			//handler.addRule(Program.compile(new File("rules/placement.mao")));
+			handler.addRule(Program.compile(new File("rules/placement.mao")));
 			handler.addRule(Program.compile(new File("rules/one_card_remaining.mao")));
 			handler.addRule(Program.compile(new File("rules/mao_on_win.mao")));
 			handler.addRule(Program.compile(new File("rules/all_hail_the_queen_of_mao.mao")));

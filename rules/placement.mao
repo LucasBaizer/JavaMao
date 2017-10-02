@@ -1,8 +1,8 @@
 Event::CardPlaced {
-	if(face(card) is face(below(1))) {
+	if(face(card) == face(below(1))) {
 		exit
 	}
-	if(suit(card) is suit(below(1))) {
+	if(suit(card) == suit(below(1))) {
 		exit
 	}
 	push(pop(playedCards), player)

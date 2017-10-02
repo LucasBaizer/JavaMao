@@ -1,5 +1,5 @@
 Event::CardPlaced {
-	if(player not actualPlayer) {
+	if(player != actualPlayer) {
 		push(pop(playedCards), player)
 		println("The card you played was returned.")
 		penalize "Out of turn."
@@ -7,7 +7,7 @@ Event::CardPlaced {
 }
 
 Event::CardPulled {
-	if(player not actualPlayer) {
+	if(player != actualPlayer) {
 		penalize "Out of turn."
 	}
 }

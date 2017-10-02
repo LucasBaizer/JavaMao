@@ -9,6 +9,7 @@ import com.mao.Face;
 import com.mao.Game;
 import com.mao.NetworkedData;
 import com.mao.Player;
+import com.mao.Suit;
 
 public class Event extends CodeBlock {
 	public static final String CARD_PLACED = "CardPlaced";
@@ -26,17 +27,24 @@ public class Event extends CodeBlock {
 			throw new CompilerError("Unknown event type: " + name);
 		}
 
-		addVariable(new Variable("card"));
+		addVariable(new Variable("card").setConstant(true));
 		for (Face face : Face.values()) {
-			addVariable(new Variable(face.name().toUpperCase(), face));
+			addVariable(new Variable(face.name().toUpperCase(), face).setConstant(true));
 		}
-		addVariable(new Variable("player"));
-		addVariable(new Variable("actualPlayer"));
-		addVariable(new Variable("playedCards"));
-		addVariable(new Variable("type::boolean", "Boolean"));
-		addVariable(new Variable("type::string", "String"));
-		addVariable(new Variable("type::integer", "Integer"));
-		addVariable(new Variable("type::card", "Card"));
+		for (Suit suit : Suit.values()) {
+			addVariable(new Variable(suit.name().toUpperCase(), suit).setConstant(true));
+		}
+
+		addVariable(new Variable("player").setConstant(true));
+		addVariable(new Variable("actualPlayer").setConstant(true));
+		addVariable(new Variable("nextPlayer").setConstant(true));
+		addVariable(new Variable("playedCards").setConstant(true));
+		addVariable(new Variable("type::boolean", "Boolean").setConstant(true));
+		addVariable(new Variable("type::string", "String").setConstant(true));
+		addVariable(new Variable("type::integer", "Integer").setConstant(true));
+		addVariable(new Variable("type::card", "Card").setConstant(true));
+		addVariable(new Variable("type::suit", "Suit").setConstant(true));
+		addVariable(new Variable("type::face", "Face").setConstant(true));
 		addMethod(new Method("face", (in) -> ((Card) in[0].obtain()).getFace()));
 		addMethod(new Method("suit", (in) -> ((Card) in[0].obtain()).getSuit()));
 		addMethod(new Method("below", (in) -> {

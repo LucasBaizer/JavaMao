@@ -3,7 +3,7 @@ package com.mao.lang;
 public class VarCommand extends Code {
 	private String definition;
 
-	public VarCommand(CodeBlock parent, String definition) {
+	public VarCommand(CodeBlock parent, String definition, boolean constant) {
 		setParent(parent);
 
 		this.definition = definition;
@@ -14,12 +14,15 @@ public class VarCommand extends Code {
 		Variable existing = getVariable(name);
 		if (split.length != 2) {
 			if (existing == null) {
+				if (constant) {
+					throw new CompilerError("Constant variabled must be assigned a value at compile-time");
+				}
 				getParent().addVariable(new Variable(name));
 			}
 		} else {
 			Object value = parseObtainable(split[1].trim()).obtain();
 			if (existing == null) {
-				getParent().addVariable(new Variable(name, value));
+				getParent().addVariable(new Variable(name, value).setConstant(constant));
 			}
 		}
 	}

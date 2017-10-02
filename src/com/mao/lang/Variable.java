@@ -3,6 +3,7 @@ package com.mao.lang;
 public class Variable implements Obtainable {
 	private String name;
 	private Object value;
+	private boolean constant;
 
 	public Variable(String name) {
 		this(name, null);
@@ -71,5 +72,14 @@ public class Variable implements Obtainable {
 	@Override
 	public Object obtain() {
 		return value;
+	}
+
+	public boolean isConstant() {
+		return constant;
+	}
+
+	public Variable setConstant(boolean constant) {
+		this.constant = constant;
+		return this;
 	}
 }

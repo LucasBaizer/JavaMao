@@ -10,10 +10,10 @@ public class IfStatement extends CodeBlock {
 		super.setParent(parent);
 		super.parseChildren();
 
-		positive = condition.contains(" is ");
-		String[] split = positive ? condition.split("is") : condition.split("not");
+		positive = condition.contains("==");
+		String[] split = positive ? condition.split("==") : condition.split("!=");
 		if (split.length != 2) {
-			throw new CompilerError("Expecting conditional in if statement (is/not)");
+			throw new CompilerError("Expecting conditional in if statement (==/!=)");
 		}
 
 		leftStatement = parseObtainable(split[0].trim());
