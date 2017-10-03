@@ -9,11 +9,11 @@ public class UICard extends UIObject {
 	private PImage image;
 
 	public UICard(Card card, int x, int y) {
-		super(x, y, Screen.getSize().width / 5, Screen.getSize().height / 5);
+		super(x, y, 0, 0);
 
 		this.card = card;
 	}
-	
+
 	@Override
 	public void initialize(Processing g) {
 		image = g.getImage(card.getSuit().name().toLowerCase());
@@ -43,9 +43,9 @@ public class UICard extends UIObject {
 		g.text(text, x + (width / 20), y + (height / 8));
 		g.text(text, (x + width - (width / 20)) - g.textWidth(text),
 				(y + height) - (height / 8) + (g.textAscent() / 1.5f));
-		
-		image.resize(width / 7, width / 7);
-		g.image(image, x + (width / 20), y + (height / 4));
+
+		g.image(image, x + (image.width / 3), y + (height / 6));
+		g.image(image, x + width - (image.width + image.width / 3), y + height - (height / 6));
 	}
 
 	@Override
