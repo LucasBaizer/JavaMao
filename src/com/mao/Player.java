@@ -3,6 +3,9 @@ package com.mao;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.mao.ui.Processing;
+import com.mao.ui.UICard;
+
 public class Player extends NetworkedObject {
 	private String username;
 	private ArrayList<Card> hand = new ArrayList<>();
@@ -44,10 +47,18 @@ public class Player extends NetworkedObject {
 
 	public void addCard(Card card) {
 		hand.add(card);
+		
+		if(Network.isClient()) {
+			Processing.getProcessing().addUIObject(new UICard(card, 500, 500));
+		}
 	}
 
 	public void removeCard(Card card) {
 		hand.remove(card);
+		
+		if(Network.isClient()) {
+			Processing.getProcessing().removeUIObject(new UICard(card, 500, 500));
+		}
 	}
 
 	public List<Card> getHand() {
