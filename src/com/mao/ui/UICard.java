@@ -45,7 +45,7 @@ public class UICard extends UIObject {
 				(y + height) - (height / 8) + (g.textAscent() / 1.5f));
 
 		g.image(image, x + (image.width / 3), y + (height / 6));
-		g.image(image, x + width - (image.width + image.width / 3), y + height - (height / 6));
+		g.image(image, x + width - (image.width + image.width / 3), y + height - (height / 6) - (image.height / 1));
 	}
 
 	@Override
