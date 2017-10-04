@@ -47,9 +47,9 @@ public class Processing extends PApplet {
 		}
 	}
 
-	public void removeUIObject(long id) {
+	public UIObject removeUIObject(long id) {
 		synchronized (objects) {
-			objects.remove(id);
+			return objects.remove(id);
 		}
 	}
 
@@ -105,6 +105,24 @@ public class Processing extends PApplet {
 		synchronized (objects) {
 			for (UIObject object : objects.values()) {
 				object.draw(this);
+			}
+		}
+	}
+
+	@Override
+	public void mousePressed() {
+		synchronized (objects) {
+			for (UIObject object : objects.values()) {
+				object.mousePressed(this);
+			}
+		}
+	}
+
+	@Override
+	public void mouseReleased() {
+		synchronized (objects) {
+			for (UIObject object : objects.values()) {
+				object.mouseReleased(this);
 			}
 		}
 	}

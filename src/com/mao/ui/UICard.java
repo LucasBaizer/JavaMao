@@ -30,6 +30,11 @@ public class UICard extends UIObject {
 
 		g.image(image, x, y);
 	}
+	
+	@Override
+	public void mousePressed(Processing g) {
+		super.mousePressed(g);
+	}
 
 	@Override
 	public long getID() {

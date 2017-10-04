@@ -55,9 +55,17 @@ public class Player extends NetworkedObject {
 
 	public void removeCard(Card card) {
 		hand.remove(card);
-
+		
 		if (Network.isClient()) {
-			Processing.getProcessing().removeUIObject(card.hashCode());
+			UICard returned = (UICard) Processing.getProcessing().removeUIObject(card.hashCode());
+			
+			for(Card each : hand) {
+				UICard ui = (UICard) Processing.getProcessing().getObject(each.hashCode());
+				if(ui.getCardIndex() > returned.getCardIndex()) {
+					ui.setCardIndex(ui.getCardIndex() - 1);
+				}
+				ui.setTotalCards(hand.size());
+			}
 		}
 	}
 

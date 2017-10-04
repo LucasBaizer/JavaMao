@@ -8,6 +8,9 @@ public abstract class UIObject {
 	protected int y;
 	protected int width;
 	protected int height;
+	protected boolean selected;
+	protected int selectedX = -1;
+	protected int selectedY = -1;
 
 	public UIObject() {
 		this(0, 0, 0, 0);
@@ -52,8 +55,22 @@ public abstract class UIObject {
 	public void setHeight(int height) {
 		this.height = height;
 	}
-	
+
 	public void initialize(Processing g) {
+	}
+
+	public void mousePressed(Processing g) {
+		if (g.mouseX > x && g.mouseX < x + width && g.mouseY > y && g.mouseY < y + height) {
+			selected = true;
+			selectedX = g.mouseX;
+			selectedY = g.mouseY;
+		}
+	}
+
+	public void mouseReleased(Processing g) {
+		selected = false;
+		selectedX = -1;
+		selectedY = -1;
 	}
 
 	public abstract void draw(Processing g);
