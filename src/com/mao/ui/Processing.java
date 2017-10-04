@@ -1,7 +1,9 @@
 package com.mao.ui;
 
 import java.awt.Dimension;
+import java.io.File;
 import java.util.HashMap;
+import java.util.regex.Pattern;
 
 import com.mao.Debug;
 import com.mao.Game;
@@ -14,8 +16,6 @@ import processing.core.PFont;
 import processing.core.PImage;
 
 public class Processing extends PApplet {
-	private static final long serialVersionUID = -546165304521904394L;
-
 	private HashMap<Long, UIObject> objects = new HashMap<>();
 	private HashMap<String, PImage> images = new HashMap<>();
 
@@ -39,13 +39,16 @@ public class Processing extends PApplet {
 
 	@Override
 	public void setup() {
-		frame.setTitle("The Game of Mao");
-		frame.setResizable(true);
+		surface.setTitle("The Game of Mao");
+		surface.setResizable(true);
 
-		images.put("spades", loadImage("assets/images/spades.png"));
-		images.put("hearts", loadImage("assets/images/hearts.png"));
-		images.put("diamonds", loadImage("assets/images/diamonds.png"));
-		images.put("clubs", loadImage("assets/images/clubs.png"));
+		File folder = new File("src/data/assets/images/");
+		for (File image : folder.listFiles()) {
+			if (image.getName().endsWith("png")) {
+				images.put(image.getName().split(Pattern.quote("."))[0], loadImage("assets/images/" + image.getName()));
+			}
+		}
+		Debug.log("Loaded {0} images.", images.size());
 	}
 
 	@Override
