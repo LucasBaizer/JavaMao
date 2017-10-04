@@ -47,17 +47,17 @@ public class Player extends NetworkedObject {
 
 	public void addCard(Card card) {
 		hand.add(card);
-		
-		if(Network.isClient()) {
-			Processing.getProcessing().addUIObject(new UICard(card, 500, 500));
+
+		if (Network.isClient()) {
+			Processing.getProcessing().addUIObject(new UICard(card, hand.size() - 1, hand.size()));
 		}
 	}
 
 	public void removeCard(Card card) {
 		hand.remove(card);
-		
-		if(Network.isClient()) {
-			Processing.getProcessing().removeUIObject(new UICard(card, 500, 500));
+
+		if (Network.isClient()) {
+			Processing.getProcessing().removeUIObject(card.hashCode());
 		}
 	}
 

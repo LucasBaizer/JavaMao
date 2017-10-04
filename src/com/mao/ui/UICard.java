@@ -7,9 +7,11 @@ import processing.core.PImage;
 public class UICard extends UIObject {
 	private Card card;
 	private PImage image;
+	private int cardIndex;
+	private int totalCards;
 
-	public UICard(Card card, int x, int y) {
-		super(x, y, 0, 0);
+	public UICard(Card card, int index, int total) {
+		super(0, 0, 0, 0);
 
 		this.card = card;
 	}
@@ -18,10 +20,7 @@ public class UICard extends UIObject {
 	public void initialize(Processing g) {
 		image = g.getImage((card.getFace().isNonNumericalCard() ? card.getFace().getNonNumericalName()
 				: card.getFace().getFaceName()) + "_of_" + card.getSuit().name().toLowerCase());
-		if (image == null) {
-			System.out.println((card.getFace().isNonNumericalCard() ? card.getFace().getNonNumericalName()
-					: card.getFace().getFaceName()) + "_of_" + card.getSuit().name().toLowerCase());
-		}
+		image.resize(250, 363);
 	}
 
 	@Override
@@ -29,31 +28,27 @@ public class UICard extends UIObject {
 		width = Screen.getSize().width / 6;
 		height = (int) (Screen.getSize().height / 2.5f);
 
-		/*
-		 * g.fill(255); g.strokeWeight(4f); g.rect(x, y, width, height, width /
-		 * 10, width / 10, width / 10, width / 10); g.strokeWeight(2f); g.rect(x
-		 * + (width / 6), y + (height / 8), width - (width / 3), height -
-		 * (height / 4), width / 20, width / 20, width / 20, width / 20);
-		 * 
-		 * if (card.getSuit().isRed()) { g.fill(255, 0, 0); } else { g.fill(0);
-		 * }
-		 * 
-		 * String text = card.getFace().getFaceName();
-		 * 
-		 * g.textSize((width / 7) / text.length()); g.text(text, x + (width /
-		 * 20), y + (height / 8)); g.text(text, (x + width - (width / 20)) -
-		 * g.textWidth(text), (y + height) - (height / 8) + (g.textAscent() /
-		 * 1.5f));
-		 * 
-		 * g.image(image, x + (image.width / 3), y + (height / 6));
-		 * g.image(image, x + width - (image.width + image.width / 3), y +
-		 * height - (height / 6) - (image.height / 1));
-		 */
 		g.image(image, x, y);
 	}
 
 	@Override
 	public long getID() {
 		return card.hashCode();
+	}
+
+	public int getCardIndex() {
+		return cardIndex;
+	}
+
+	public void setCardIndex(int cardIndex) {
+		this.cardIndex = cardIndex;
+	}
+
+	public int getTotalCards() {
+		return totalCards;
+	}
+
+	public void setTotalCards(int totalCards) {
+		this.totalCards = totalCards;
 	}
 }

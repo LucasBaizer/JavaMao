@@ -2,6 +2,7 @@ package com.mao.ui;
 
 import java.awt.Dimension;
 import java.io.File;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.regex.Pattern;
 
@@ -16,21 +17,44 @@ import processing.core.PFont;
 import processing.core.PImage;
 
 public class Processing extends PApplet {
+	private static final long serialVersionUID = 4080175460722677681L;
+
 	private HashMap<Long, UIObject> objects = new HashMap<>();
 	private HashMap<String, PImage> images = new HashMap<>();
+	private ArrayList<UIObject> waitingObjects = new ArrayList<>();
+	private Object lock = new Object();
+	private boolean shouldLock = true;
 
 	public Processing() {
 		instance = this;
 	}
 
 	public void addUIObject(UIObject object) {
-		objects.put(object.getID(), object);
+		synchronized (objects) {
+			objects.put(object.getID(), object);
+		}
 
-		object.initialize(this);
+		if (shouldLock) {
+			waitingObjects.add(object);
+		} else {
+			object.initialize(this);
+		}
 	}
 
 	public void removeUIObject(UIObject object) {
-		objects.remove(object.getID());
+		synchronized (objects) {
+			objects.remove(object.getID());
+		}
+	}
+
+	public void removeUIObject(long id) {
+		synchronized (objects) {
+			objects.remove(id);
+		}
+	}
+
+	public UIObject getObject(long id) {
+		return objects.get(id);
 	}
 
 	public PImage getImage(String name) {
@@ -39,8 +63,8 @@ public class Processing extends PApplet {
 
 	@Override
 	public void setup() {
-		surface.setTitle("The Game of Mao");
-		surface.setResizable(true);
+		frame.setTitle("The Game of Mao");
+		frame.setResizable(true);
 
 		File folder = new File("src/data/assets/images/");
 		for (File image : folder.listFiles()) {
@@ -49,6 +73,16 @@ public class Processing extends PApplet {
 			}
 		}
 		Debug.log("Loaded {0} images.", images.size());
+		synchronized (lock) {
+			lock.notifyAll();
+		}
+
+		for (UIObject object : waitingObjects) {
+			object.initialize(this);
+		}
+		Debug.log("Initialized waiting objects.");
+		waitingObjects.clear();
+		shouldLock = false;
 	}
 
 	@Override
@@ -58,8 +92,20 @@ public class Processing extends PApplet {
 
 		Screen.setSize(new Dimension(width, height));
 
-		for (UIObject object : objects.values()) {
-			object.draw(this);
+		if (shouldLock) {
+			synchronized (lock) {
+				try {
+					lock.wait();
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
+			}
+		}
+
+		synchronized (objects) {
+			for (UIObject object : objects.values()) {
+				object.draw(this);
+			}
 		}
 	}
 
