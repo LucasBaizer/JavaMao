@@ -45,6 +45,8 @@ public class Event extends CodeBlock {
 		addVariable(new Variable("Type::card", "Card").setConstant(true));
 		addVariable(new Variable("Type::suit", "Suit").setConstant(true));
 		addVariable(new Variable("Type::face", "Face").setConstant(true));
+		addVariable(new Variable("Type::stack", "Stack").setConstant(true));
+		addVariable(new Variable("Type::list", "List").setConstant(true));
 		addMethod(new Method("face", 1, (in) -> ((Card) in[0]).getFace()));
 		addMethod(new Method("suit", 1, (in) -> ((Card) in[0]).getSuit()));
 		addMethod(new Method("below", 1, (in) -> {
@@ -78,35 +80,35 @@ public class Event extends CodeBlock {
 		addMethod(new Method("Player::username", 1, (in) -> {
 			return ((Player) in[0]).getUsername();
 		}));
-		addMethod(new Method("sum", 2, (in) -> {
+		addMethod(new Method("Math::sum", 2, (in) -> {
 			int total = 0;
 			for (Object obtainable : in) {
 				total += (int) obtainable;
 			}
 			return total;
 		}));
-		addMethod(new Method("diff", 2, (in) -> {
+		addMethod(new Method("Math::diff", 2, (in) -> {
 			int total = (int) in[0];
 			for (int i = 1; i < in.length; i++) {
 				total -= (int) in[i];
 			}
 			return total;
 		}));
-		addMethod(new Method("mult", 2, (in) -> {
+		addMethod(new Method("Math::mult", 2, (in) -> {
 			int total = 1;
 			for (Object obtainable : in) {
 				total *= (int) obtainable;
 			}
 			return total;
 		}));
-		addMethod(new Method("div", 2, (in) -> {
+		addMethod(new Method("Math::div", 2, (in) -> {
 			int total = (int) in[0];
 			for (int i = 1; i < in.length; i++) {
 				total /= (int) in[i];
 			}
 			return total;
 		}));
-		addMethod(new Method("concat", 2, (in) -> {
+		addMethod(new Method("String::concat", 2, (in) -> {
 			String target = (String) in[0];
 			String toConcat = (String) in[1];
 			return target.concat(toConcat);
