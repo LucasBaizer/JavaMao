@@ -1,5 +1,5 @@
 Event::CardPlaced {
-	if(player::cardCount(player) == 1) {
+	if(Player::cardCount(player) == 1) {
 		say "One card remaining."
 	}
 }
