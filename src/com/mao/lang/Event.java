@@ -39,12 +39,12 @@ public class Event extends CodeBlock {
 		addVariable(new Variable("actualPlayer").setConstant(true));
 		addVariable(new Variable("nextPlayer").setConstant(true));
 		addVariable(new Variable("playedCards").setConstant(true));
-		addVariable(new Variable("type::boolean", "Boolean").setConstant(true));
-		addVariable(new Variable("type::string", "String").setConstant(true));
-		addVariable(new Variable("type::integer", "Integer").setConstant(true));
-		addVariable(new Variable("type::card", "Card").setConstant(true));
-		addVariable(new Variable("type::suit", "Suit").setConstant(true));
-		addVariable(new Variable("type::face", "Face").setConstant(true));
+		addVariable(new Variable("Type::boolean", "Boolean").setConstant(true));
+		addVariable(new Variable("Type::string", "String").setConstant(true));
+		addVariable(new Variable("Type::integer", "Integer").setConstant(true));
+		addVariable(new Variable("Type::card", "Card").setConstant(true));
+		addVariable(new Variable("Type::suit", "Suit").setConstant(true));
+		addVariable(new Variable("Type::face", "Face").setConstant(true));
 		addMethod(new Method("face", 1, (in) -> ((Card) in[0]).getFace()));
 		addMethod(new Method("suit", 1, (in) -> ((Card) in[0]).getSuit()));
 		addMethod(new Method("below", 1, (in) -> {
@@ -72,10 +72,10 @@ public class Event extends CodeBlock {
 			}
 			return null;
 		}));
-		addMethod(new Method("player::cardCount", 1, (in) -> {
+		addMethod(new Method("Player::cardCount", 1, (in) -> {
 			return ((Player) in[0]).getHand().size();
 		}));
-		addMethod(new Method("player::username", 1, (in) -> {
+		addMethod(new Method("Player::username", 1, (in) -> {
 			return ((Player) in[0]).getUsername();
 		}));
 		addMethod(new Method("sum", 2, (in) -> {
