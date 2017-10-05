@@ -18,7 +18,7 @@ JavaMao has a built-in interpreter for its own DSL called Mao Scripting Language
 MSL is the way to create simple and complicated rules in an easily readable manner at runtime.
 For documentation on MSL, please look at the JavaMao wiki. You can also look at the default rules of Mao in the [rules folder](/rules) for inspiration.
 
-#Licensing
+# Licensing
 Licensed under the MIT license.
 
 Copyright (c) 2017 Lucas Baizer
