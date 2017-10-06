@@ -16,6 +16,8 @@ If you really wanted to know the rest of the rules, though, you can look at the 
 # How are rules created?
 JavaMao has a built-in interpreter for its own DSL called Mao Scripting Language (MSL).
 MSL is the way to create simple and complicated rules in an easily readable manner at runtime.
+
+# Documentation
 For documentation on MSL, please look at the [JavaMao wiki](https://github.com/TitaniumSapphire/JavaMao/wiki). You can also look at the default rules of Mao in the [rules folder](/rules) for inspiration.
 
 # Licensing
