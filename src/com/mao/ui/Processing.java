@@ -3,14 +3,15 @@ package com.mao.ui;
 import java.awt.Dimension;
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.Map;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 import com.mao.Debug;
-import com.mao.Game;
-import com.mao.Network;
-import com.mao.NetworkClient;
-import com.mao.Player;
 
 import processing.core.PApplet;
 import processing.core.PFont;
@@ -32,6 +33,7 @@ public class Processing extends PApplet {
 	public void addUIObject(UIObject object) {
 		synchronized (objects) {
 			objects.put(object.getID(), object);
+			sortObjects();
 		}
 
 		if (shouldLock) {
@@ -44,6 +46,7 @@ public class Processing extends PApplet {
 	public void removeUIObject(UIObject object) {
 		synchronized (objects) {
 			objects.remove(object.getID());
+			sortObjects();
 		}
 	}
 
@@ -53,12 +56,24 @@ public class Processing extends PApplet {
 		}
 	}
 
+	public void sortObjects() {
+		synchronized (objects) {
+			objects = (HashMap<Long, UIObject>) sortByValue(objects);
+		}
+	}
+
 	public UIObject getObject(long id) {
 		return objects.get(id);
 	}
 
 	public PImage getImage(String name) {
 		return images.get(name);
+	}
+
+	public PImage reloadImage(String name) {
+		PImage image = loadImage("assets/images/" + name + ".png");
+		images.put(name, image);
+		return image;
 	}
 
 	@Override
@@ -83,6 +98,9 @@ public class Processing extends PApplet {
 		Debug.log("Initialized waiting objects.");
 		waitingObjects.clear();
 		shouldLock = false;
+
+		addUIObject(new UIDeck());
+		addUIObject(new UIPlayedCards());
 	}
 
 	@Override
@@ -103,7 +121,8 @@ public class Processing extends PApplet {
 		}
 
 		synchronized (objects) {
-			for (UIObject object : objects.values()) {
+			UIObject[] values = objects.values().toArray(new UIObject[objects.size()]);
+			for (UIObject object : values) {
 				object.draw(this);
 			}
 		}
@@ -112,8 +131,12 @@ public class Processing extends PApplet {
 	@Override
 	public void mousePressed() {
 		synchronized (objects) {
-			for (UIObject object : objects.values()) {
-				object.mousePressed(this);
+			UIObject[] values = objects.values().toArray(new UIObject[objects.size()]);
+			Arrays.sort(values, Comparator.reverseOrder());
+			for (UIObject object : values) {
+				if(object.mousePressed(this)) {
+					break;
+				}
 			}
 		}
 	}
@@ -121,43 +144,22 @@ public class Processing extends PApplet {
 	@Override
 	public void mouseReleased() {
 		synchronized (objects) {
-			for (UIObject object : objects.values()) {
+			UIObject[] values = objects.values().toArray(new UIObject[objects.size()]);
+			for (UIObject object : values) {
 				object.mouseReleased(this);
 			}
 		}
+	}
+
+	// thanks to @CarterPage on StackOverflow
+	private static <K, V extends Comparable<? super V>> Map<K, V> sortByValue(Map<K, V> map) {
+		return map.entrySet().stream().sorted(Map.Entry.comparingByValue())
+				.collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue, (e1, e2) -> e1, LinkedHashMap::new));
 	}
 
 	private static Processing instance;
 
 	public static Processing getProcessing() {
 		return instance;
-	}
-
-	public static void main(String[] args) {
-		Network.initialize(new NetworkClient());
-
-		PApplet.main("com.mao.ui.Processing");
-
-		try {
-			Thread.sleep(1000);
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		}
-
-		Player player = new Player();
-		player.initialize("Lucas");
-
-		Debug.log("Hello, my name is " + player.getUsername() + "!");
-
-		for (int i = 0; i < 4; i++) {
-			player.addCard(Game.getGame().getCardFromDeck());
-		}
-
-		player.update();
-		if (Game.getGame().getCurrentPlayerUsername() == null) {
-			Game.getGame().setCurrentPlayerUsername(player.getUsername());
-			Debug.log("It is now " + player.getUsername() + "'s turn.");
-		}
-		Game.getGame().update();
 	}
 }

@@ -2,6 +2,7 @@ package com.mao.lang;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 
 import com.mao.Card;
@@ -113,6 +114,12 @@ public class Event extends CodeBlock {
 			String toConcat = (String) in[1];
 			return target.concat(toConcat);
 		}));
+		addMethod(new Method("Math::min", 2, (in) -> {
+			return Math.min((int) in[0], (int) in[1]);
+		}));
+		addMethod(new Method("List::size", 1, (in) -> {
+			return ((Collection<?>) in[0]).size();
+		}));
 		addMethod(new Method("typeof", 1, (in) -> {
 			return in[0].getClass().getSimpleName();
 		}));
@@ -132,16 +139,15 @@ public class Event extends CodeBlock {
 			ExecutionResult result = child.execute();
 			if (result.isSuccessful()) {
 				if (result.shouldExitScript()) {
-					
-					
+
 					return result;
 				}
 			}
 		}
-		
+
 		return ExecutionResultBuilder.builder(this).successful().build();
 	}
-	
+
 	@Override
 	public String toString() {
 		return "Event::" + name;

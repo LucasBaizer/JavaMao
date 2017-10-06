@@ -2,14 +2,14 @@ Event::CardPlaced {
 	if(face(card) == SEVEN) {
 		var toSay = "Have a "
 		
-		for(var i = 1 -> 4) {
+		for(var i = 1 -> Math::min(List::size(playedCards), 4)) {
 			if(face(below(i)) != SEVEN) {
 				break
 			}
-			toSay = concat(toSay, "very ")
+			toSay = String::concat(toSay, "very ")
 		}
 		
-		toSay = concat(toSay, "nice day.")
+		toSay = String::concat(toSay, "nice day.")
 		say toSay
 	}
 }

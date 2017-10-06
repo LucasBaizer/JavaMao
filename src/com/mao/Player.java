@@ -1,6 +1,7 @@
 package com.mao;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import com.mao.ui.Processing;
@@ -47,24 +48,37 @@ public class Player extends NetworkedObject {
 
 	public void addCard(Card card) {
 		hand.add(card);
+		Collections.sort(hand);
 
 		if (Network.isClient()) {
-			Processing.getProcessing().addUIObject(new UICard(card, hand.size() - 1, hand.size()));
+			if (Processing.getProcessing() != null) {
+				Processing.getProcessing().addUIObject(new UICard(card, hand.indexOf(card), hand.size()));
+
+				for (Card each : hand) {
+					UICard uiCard = (UICard) Processing.getProcessing().getObject(each.hashCode());
+					uiCard.setCardIndex(hand.indexOf(uiCard.card));
+				}
+
+				Processing.getProcessing().sortObjects();
+			}
 		}
 	}
 
 	public void removeCard(Card card) {
 		hand.remove(card);
-		
+		Collections.sort(hand);
+
 		if (Network.isClient()) {
-			UICard returned = (UICard) Processing.getProcessing().removeUIObject(card.hashCode());
-			
-			for(Card each : hand) {
-				UICard ui = (UICard) Processing.getProcessing().getObject(each.hashCode());
-				if(ui.getCardIndex() > returned.getCardIndex()) {
-					ui.setCardIndex(ui.getCardIndex() - 1);
+			if (Processing.getProcessing() != null) {
+				UICard returned = (UICard) Processing.getProcessing().removeUIObject(card.hashCode());
+
+				for (Card each : hand) {
+					UICard ui = (UICard) Processing.getProcessing().getObject(each.hashCode());
+					if (ui.getCardIndex() > returned.getCardIndex()) {
+						ui.setCardIndex(ui.getCardIndex() - 1);
+					}
+					ui.setTotalCards(hand.size());
 				}
-				ui.setTotalCards(hand.size());
 			}
 		}
 	}

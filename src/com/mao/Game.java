@@ -91,7 +91,21 @@ public class Game extends NetworkedObject {
 	}
 
 	public Card getCardFromDeck() {
-		return deck.pop();
+		Card card = deck.pop();
+		if (deck.size() == 0) {
+			Card top = playedCards.remove(playedCards.size() - 1);
+			deck.addAll(playedCards);
+
+			for (int i = 0; i < deck.size(); i++) {
+				Collections.shuffle(deck);
+			}
+
+			playedCards.clear();
+			playedCards.add(top);
+
+			update();
+		}
+		return card;
 	}
 
 	public void shuffleDeck() {

@@ -63,6 +63,10 @@ public class Card implements Serializable, Comparable<Card> {
 	public String toString() {
 		return face.name().toLowerCase() + " of " + suit.name().toLowerCase();
 	}
+	
+	public int getCardNumber() {
+		return (this.suit.ordinal() * 13) + this.face.ordinal();
+	}
 
 	@Override
 	public int compareTo(Card o) {

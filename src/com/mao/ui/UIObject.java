@@ -2,7 +2,7 @@ package com.mao.ui;
 
 import com.mao.Game;
 
-public abstract class UIObject {
+public abstract class UIObject implements Comparable<UIObject> {
 	private long id;
 	protected int x;
 	protected int y;
@@ -59,12 +59,14 @@ public abstract class UIObject {
 	public void initialize(Processing g) {
 	}
 
-	public void mousePressed(Processing g) {
+	public boolean mousePressed(Processing g) {
 		if (g.mouseX > x && g.mouseX < x + width && g.mouseY > y && g.mouseY < y + height) {
 			selected = true;
 			selectedX = g.mouseX;
 			selectedY = g.mouseY;
+			return true;
 		}
+		return false;
 	}
 
 	public void mouseReleased(Processing g) {
@@ -74,6 +76,12 @@ public abstract class UIObject {
 	}
 
 	public abstract void draw(Processing g);
+	
+	public abstract int getSortingPosition();
+	
+	public int compareTo(UIObject other) {
+		return this.getSortingPosition() - other.getSortingPosition();
+	}
 
 	public long getID() {
 		return id;

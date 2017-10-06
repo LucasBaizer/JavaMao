@@ -1,19 +1,26 @@
-package com.mao;
+package com.mao.ui;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 import java.util.Scanner;
 
+import com.mao.Card;
+import com.mao.Debug;
+import com.mao.Game;
+import com.mao.Network;
+import com.mao.NetworkClient;
+import com.mao.Player;
+import com.mao.RuleHandler;
 import com.mao.lang.Code;
-import com.mao.lang.Event;
 import com.mao.lang.PenalizeCommand;
 import com.mao.lang.SayCommand;
 
+import processing.core.PApplet;
+
 public class MainClient {
+	public static Player player;
+	
 	private static final Scanner in = new Scanner(System.in);
 
-	public static void main(String[] args) {
+	/*public static void main(String[] args) {
 		Network.initialize(new NetworkClient());
 
 		try {
@@ -98,9 +105,37 @@ public class MainClient {
 			}
 			System.out.println();
 		}
+	}*/
+	
+	public static void main(String[] args) {
+		Network.initialize(new NetworkClient());
+
+		PApplet.main("com.mao.ui.Processing");
+
+		try {
+			Thread.sleep(1000);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+
+		player = new Player();
+		player.initialize("Lucas");
+
+		Debug.log("Hello, my name is " + player.getUsername() + "!");
+
+		for (int i = 0; i < 4; i++) {
+			player.addCard(Game.getGame().getCardFromDeck());
+		}
+
+		player.update();
+		if (Game.getGame().getCurrentPlayerUsername() == null) {
+			Game.getGame().setCurrentPlayerUsername(player.getUsername());
+			Debug.log("It is now " + player.getUsername() + "'s turn.");
+		}
+		Game.getGame().update();
 	}
 
-	private static void callEvent(Player player, Card card, String event) {
+	public static void callEvent(Player player, Card card, String event) {
 		for (Code response : RuleHandler.getRuleHandler().fire(event, player, Player.getCurrentTurnPlayer(),
 				Player.getNextTurnPlayer(), card)) {
 			if (response instanceof PenalizeCommand) {
