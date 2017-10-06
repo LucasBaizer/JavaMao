@@ -58,7 +58,7 @@ public abstract class UIObject implements Comparable<UIObject> {
 
 	public void initialize(Processing g) {
 	}
-
+	
 	public boolean mousePressed(Processing g) {
 		if (g.mouseX > x && g.mouseX < x + width && g.mouseY > y && g.mouseY < y + height) {
 			selected = true;

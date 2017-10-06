@@ -1,5 +1,6 @@
 package com.mao.ui;
 
+import java.awt.Color;
 import java.awt.Dimension;
 import java.io.File;
 import java.util.ArrayList;
@@ -74,6 +75,10 @@ public class Processing extends PApplet {
 		PImage image = loadImage("assets/images/" + name + ".png");
 		images.put(name, image);
 		return image;
+	}
+	
+	public void notify(String message, Color color) {
+		addUIObject(new UINotification(message, color));
 	}
 
 	@Override
