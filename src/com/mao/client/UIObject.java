@@ -1,5 +1,7 @@
 package com.mao.client;
 
+import java.awt.event.KeyEvent;
+
 import com.mao.Game;
 
 public abstract class UIObject implements Comparable<UIObject> {
@@ -73,6 +75,12 @@ public abstract class UIObject implements Comparable<UIObject> {
 		selected = false;
 		selectedX = -1;
 		selectedY = -1;
+	}
+	
+	public void keyPressed(KeyEvent e) {
+	}
+	
+	public void keyReleased(KeyEvent e) {
 	}
 
 	public abstract void draw(Processing g);

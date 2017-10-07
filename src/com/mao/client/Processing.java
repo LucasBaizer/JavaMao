@@ -2,6 +2,7 @@ package com.mao.client;
 
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.event.KeyEvent;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -172,6 +173,26 @@ public class Processing extends PApplet {
 			UIObject[] values = objects.values().toArray(new UIObject[objects.size()]);
 			for (UIObject object : values) {
 				object.mouseReleased(this);
+			}
+		}
+	}
+
+	@Override
+	public void keyPressed(KeyEvent e) {
+		synchronized (objects) {
+			UIObject[] values = objects.values().toArray(new UIObject[objects.size()]);
+			for (UIObject object : values) {
+				object.keyPressed(e);
+			}
+		}
+	}
+
+	@Override
+	public void keyReleased(KeyEvent e) {
+		synchronized (objects) {
+			UIObject[] values = objects.values().toArray(new UIObject[objects.size()]);
+			for (UIObject object : values) {
+				object.keyReleased(e);
 			}
 		}
 	}
