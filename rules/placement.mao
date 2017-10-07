@@ -5,7 +5,7 @@ Event::CardPlaced {
 	if(suit(card) == suit(below(1))) {
 		exit
 	}
-	push(pop(playedCards), player)
+	List::push(List::pop(playedCards), player)
 	println("The card you played was returned.")
 	penalize "Wrong placement."
 }

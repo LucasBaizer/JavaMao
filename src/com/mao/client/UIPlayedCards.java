@@ -1,4 +1,4 @@
-package com.mao.ui;
+package com.mao.client;
 
 import java.util.HashMap;
 

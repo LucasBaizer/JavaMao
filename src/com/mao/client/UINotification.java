@@ -1,4 +1,4 @@
-package com.mao.ui;
+package com.mao.client;
 
 import java.awt.Color;
 
@@ -29,9 +29,8 @@ public class UINotification extends UIObject {
 		g.rect(x, y, width, height);
 
 		g.fill(255);
-		g.textSize(width / 12f);
-		g.text(message, (Screen.getSize().width / 2) - (g.textWidth(message) / 2),
-				y + (height / 2));
+		g.textSize((width / 12f) / message.split("\r\n|\r|\n").length);
+		g.text(message, (Screen.getSize().width / 2) - (g.textWidth(message) / 2), y + (height / 2));
 	}
 
 	@Override

@@ -48,7 +48,7 @@ public abstract class Code {
 			return new DefaultObtainable(ref.replace("\"", ""));
 		}
 		try {
-			return new DefaultObtainable(Integer.parseInt(ref));
+			return new DefaultObtainable(Double.parseDouble(ref));
 		} catch (NumberFormatException e) {
 			// ... who cares?
 		}

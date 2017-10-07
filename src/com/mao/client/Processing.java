@@ -1,4 +1,4 @@
-package com.mao.ui;
+package com.mao.client;
 
 import java.awt.Color;
 import java.awt.Dimension;
@@ -13,6 +13,7 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import com.mao.Debug;
+import com.mao.Network;
 
 import processing.core.PApplet;
 import processing.core.PFont;
@@ -21,8 +22,19 @@ import processing.core.PImage;
 public class Processing extends PApplet {
 	private static final long serialVersionUID = 4080175460722677681L;
 
+	public static final int GAME_STATE_MAIN_MENU = 0;
+	public static final int GAME_STATE_LOBBY_MENU = 1;
+	public static final int GAME_STATE_JOINED_LOBBY = 2;
+	public static final int GAME_STATE_CREATE_LOBBY = 3;
+	public static final int GAME_STATE_CREATED_LOBBY = 4;
+	public static final int GAME_STATE_IN_GAME = 5;
+
+	private int gameState = GAME_STATE_MAIN_MENU;
+	private UIState uiState = new UIMainMenu();
+
 	private HashMap<Long, UIObject> objects = new HashMap<>();
 	private HashMap<String, PImage> images = new HashMap<>();
+	private HashMap<Integer, UIState> states = new HashMap<>();
 	private ArrayList<UIObject> waitingObjects = new ArrayList<>();
 	private Object lock = new Object();
 	private boolean shouldLock = true;
@@ -76,9 +88,12 @@ public class Processing extends PApplet {
 		images.put(name, image);
 		return image;
 	}
-	
-	public void notify(String message, Color color) {
+
+	public void notify(String message, String otherMessage, Color color) {
 		addUIObject(new UINotification(message, color));
+
+		Network.getNetworkClient().registerObject(new NetworkedNotification(
+				MainClient.player.getUsername() + ": " + otherMessage, color == Color.RED ? Color.GREEN : Color.RED));
 	}
 
 	@Override
@@ -104,8 +119,13 @@ public class Processing extends PApplet {
 		waitingObjects.clear();
 		shouldLock = false;
 
-		addUIObject(new UIDeck());
-		addUIObject(new UIPlayedCards());
+		states.put(GAME_STATE_MAIN_MENU, uiState);
+		states.put(GAME_STATE_CREATE_LOBBY, new UICreateLobby());
+		states.put(GAME_STATE_LOBBY_MENU, new UILobbyList());
+		states.put(GAME_STATE_IN_GAME, new UIGame());
+
+		Screen.setSize(new Dimension(width, height));
+		uiState.createObjects(this);
 	}
 
 	@Override
@@ -139,7 +159,7 @@ public class Processing extends PApplet {
 			UIObject[] values = objects.values().toArray(new UIObject[objects.size()]);
 			Arrays.sort(values, Comparator.reverseOrder());
 			for (UIObject object : values) {
-				if(object.mousePressed(this)) {
+				if (object.mousePressed(this)) {
 					break;
 				}
 			}
@@ -153,6 +173,21 @@ public class Processing extends PApplet {
 			for (UIObject object : values) {
 				object.mouseReleased(this);
 			}
+		}
+	}
+
+	public int getGameState() {
+		return gameState;
+	}
+
+	public void setGameState(int gameState) {
+		this.gameState = gameState;
+		this.objects.clear();
+		this.waitingObjects.clear();
+
+		UIState state = states.get(gameState);
+		if (state != null) {
+			state.createObjects(this);
 		}
 	}
 

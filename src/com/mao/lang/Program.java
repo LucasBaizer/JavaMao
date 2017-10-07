@@ -5,11 +5,14 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Pattern;
 
 import com.mao.Debug;
 import com.mao.NetworkedData;
 
 public class Program {
+	private String name;
+	private ArrayList<String> sayings = new ArrayList<>();
 	private ArrayList<Event> events = new ArrayList<>();
 	private ArrayList<String> globals = new ArrayList<>();
 
@@ -43,6 +46,11 @@ public class Program {
 	}
 
 	public void writeToNetworkData(NetworkedData data) {
+		data.write(name);
+		data.write(sayings.size());
+		for (int i = 0; i < sayings.size(); i++) {
+			data.write(sayings.get(i));
+		}
 		data.write(events.size());
 		for (int i = 0; i < events.size(); i++) {
 			events.get(i).writeToNetworkData(data);
@@ -55,6 +63,11 @@ public class Program {
 
 	public static Program readFromNetworkData(NetworkedData data) {
 		Program program = new Program();
+		program.name = data.read();
+		int sayingsSize = data.read();
+		for (int i = 0; i < sayingsSize; i++) {
+			program.sayings.add(data.read());
+		}
 		int eventsSize = data.read();
 		for (int i = 0; i < eventsSize; i++) {
 			program.events.add(Event.readFromNetworkData(data));
@@ -68,7 +81,11 @@ public class Program {
 
 	public static Program compile(File file) throws IOException {
 		Debug.log("Compiling Mao rule {0}...", file.getName());
-		return compile(new String(Files.readAllBytes(file.toPath()), "UTF-8"));
+		long time = System.currentTimeMillis();
+		Program result = compile(new String(Files.readAllBytes(file.toPath()), "UTF-8"));
+		result.name = file.getName().split(Pattern.quote("."))[0];
+		Debug.log("Compiled rule in {0}ms.", System.currentTimeMillis() - time);
+		return result;
 	}
 
 	public static Program compile(String program) {
@@ -77,6 +94,13 @@ public class Program {
 		Program prog = new Program();
 
 		int currentIndex = -1;
+		while ((currentIndex = program.indexOf("#register ", currentIndex + 1)) != -1) {
+			String register = program.substring(currentIndex, program.indexOf("\n", currentIndex + 1)).trim();
+			String def = register.substring(9).trim();
+			prog.sayings.add(def);
+		}
+		currentIndex = -1;
+
 		while ((currentIndex = program.indexOf("global ", currentIndex + 1)) != -1) {
 			String global = program.substring(currentIndex, program.indexOf("\n", currentIndex + 1)).trim();
 
@@ -87,7 +111,7 @@ public class Program {
 						.trim();
 			}
 
-			String def = global.substring(7);
+			String def = global.substring(7).trim();
 			prog.globals.add(def);
 		}
 		currentIndex = -1;
@@ -122,5 +146,13 @@ public class Program {
 			}
 		}
 		return closePos;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public List<String> getRegisteredSayings() {
+		return sayings;
 	}
 }

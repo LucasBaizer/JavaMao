@@ -1,3 +1,8 @@
+#register have a nice day
+#register have a very nice day
+#register have a very very nice day
+#register have a very very very nice day
+
 Event::CardPlaced {
 	if(face(card) == SEVEN) {
 		var toSay = "Have a "

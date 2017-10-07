@@ -1,4 +1,4 @@
-package com.mao.ui;
+package com.mao.client;
 
 import com.mao.Card;
 import com.mao.Game;

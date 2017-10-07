@@ -52,17 +52,17 @@ public class Event extends CodeBlock {
 		addMethod(new Method("suit", 1, (in) -> ((Card) in[0]).getSuit()));
 		addMethod(new Method("below", 1, (in) -> {
 			return Game.getGame().getPlayedCards()
-					.get(Math.max(0, Game.getGame().getPlayedCards().size() - ((int) in[0] + 1)));
+					.get((int) Math.max(0, Game.getGame().getPlayedCards().size() - ((double) in[0] + 1)));
 		}));
 		addMethod(new Method("println", 1, (in) -> {
 			System.out.println(in[0]);
 			return null;
 		}));
-		addMethod(new Method("pop", 1, (in) -> {
+		addMethod(new Method("List::pop", 1, (in) -> {
 			List<?> list = (ArrayList<?>) in[0];
 			return list.remove(list.size() - 1);
 		}));
-		addMethod(new Method("push", 2, (params) -> {
+		addMethod(new Method("List::push", 2, (params) -> {
 			Card card = (Card) params[0];
 			Object par1 = params[1];
 			if (par1 instanceof Player) {
@@ -82,43 +82,61 @@ public class Event extends CodeBlock {
 			return ((Player) in[0]).getUsername();
 		}));
 		addMethod(new Method("Math::sum", 2, (in) -> {
-			int total = 0;
+			double total = 0;
 			for (Object obtainable : in) {
-				total += (int) obtainable;
+				total += (double) obtainable;
 			}
 			return total;
 		}));
 		addMethod(new Method("Math::diff", 2, (in) -> {
-			int total = (int) in[0];
+			double total = (double) in[0];
 			for (int i = 1; i < in.length; i++) {
-				total -= (int) in[i];
+				total -= (double) in[i];
 			}
 			return total;
 		}));
 		addMethod(new Method("Math::mult", 2, (in) -> {
-			int total = 1;
+			double total = 1;
 			for (Object obtainable : in) {
-				total *= (int) obtainable;
+				total *= (double) obtainable;
 			}
 			return total;
 		}));
 		addMethod(new Method("Math::div", 2, (in) -> {
-			int total = (int) in[0];
+			double total = (double) in[0];
 			for (int i = 1; i < in.length; i++) {
-				total /= (int) in[i];
+				total /= (double) in[i];
 			}
 			return total;
 		}));
+		addMethod(new Method("Math::random", 0, (in) -> Math.random()));
+		addMethod(new Method("Math::pow", 2, (in) -> Math.pow((double) in[0], (double) in[1])));
+		addMethod(new Method("Math::abs", 1, (in) -> Math.abs((double) in[0])));
+		addMethod(new Method("Math::max", 2, (in) -> Math.max((double) in[0], (double) in[1])));
+		addMethod(new Method("Math::min", 2, (in) -> Math.min((double) in[0], (double) in[1])));
+		addMethod(new Method("Math::sin", 1, (in) -> Math.sin((double) in[0])));
+		addMethod(new Method("Math::cos", 1, (in) -> Math.cos((double) in[0])));
+		addMethod(new Method("Math::tan", 1, (in) -> Math.tan((double) in[0])));
+		addMethod(new Method("Math::asin", 1, (in) -> Math.asin((double) in[0])));
+		addMethod(new Method("Math::acos", 1, (in) -> Math.acos((double) in[0])));
+		addMethod(new Method("Math::atan", 1, (in) -> Math.atan((double) in[0])));
+		addMethod(new Method("Math::toDegrees", 1, (in) -> Math.toDegrees((double) in[0])));
+		addMethod(new Method("Math::toRadians", 1, (in) -> Math.toRadians((double) in[0])));
+		addMethod(new Method("Math::floor", 1, (in) -> Math.floor((double) in[0])));
+		addMethod(new Method("Math::ceil", 1, (in) -> Math.ceil((double) in[0])));
+		addMethod(new Method("Math::round", 1, (in) -> Math.round((double) in[0])));
+		addMethod(new Method("Math::log", 1, (in) -> Math.log((double) in[0])));
+		addMethod(new Method("Math::log10", 1, (in) -> Math.log10((double) in[0])));
+
 		addMethod(new Method("String::concat", 2, (in) -> {
 			String target = (String) in[0];
 			String toConcat = (String) in[1];
 			return target.concat(toConcat);
 		}));
-		addMethod(new Method("Math::min", 2, (in) -> {
-			return Math.min((int) in[0], (int) in[1]);
-		}));
+		addMethod(new Method("String::length", 1, (in) -> ((String) in[0]).length()));
+
 		addMethod(new Method("List::size", 1, (in) -> {
-			return ((Collection<?>) in[0]).size();
+			return (double) ((Collection<?>) in[0]).size();
 		}));
 		addMethod(new Method("typeof", 1, (in) -> {
 			return in[0].getClass().getSimpleName();

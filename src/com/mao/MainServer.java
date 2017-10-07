@@ -6,7 +6,7 @@ import com.mao.lang.Program;
 
 public class MainServer {
 	public static void main(String[] args) {
-		Network.initialize(new NetworkServer());
+		Network.initialize(new NetworkServer(1337));
 
 		Game game = Game.initialize();
 		for (int i = 0; i < 52; i++) {

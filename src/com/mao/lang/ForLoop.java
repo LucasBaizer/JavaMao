@@ -40,8 +40,8 @@ public class ForLoop extends CodeBlock {
 			toExecute.execute();
 		}
 
-		int start = (int) counter.obtain();
-		for (; start < (int) to.obtain(); start++) {
+		double start = (double) counter.obtain();
+		for (; start < (double) to.obtain(); start++) {
 			for (Code child : getChildren()) {
 				ExecutionResult result = child.execute();
 				if (result.isSuccessful()) {
@@ -54,7 +54,7 @@ public class ForLoop extends CodeBlock {
 				}
 			}
 
-			counter.setValue((int) counter.getValue() + 1);
+			counter.setValue((double) counter.getValue() + 1);
 
 			ran = true;
 		}

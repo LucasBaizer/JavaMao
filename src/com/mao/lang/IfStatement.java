@@ -1,5 +1,7 @@
 package com.mao.lang;
 
+import java.util.Objects;
+
 public class IfStatement extends CodeBlock {
 	private Obtainable leftStatement;
 	private Obtainable rightStatement;
@@ -23,7 +25,19 @@ public class IfStatement extends CodeBlock {
 	@Override
 	public ExecutionResult execute() {
 		boolean shouldBreak = false;
-		boolean successful = leftStatement.obtain().equals(rightStatement.obtain()) == positive;
+
+		Object a = leftStatement.obtain();
+		Object b = rightStatement.obtain();
+
+		if (a instanceof Number) {
+			a = ((Number) a).doubleValue();
+		}
+		if (b instanceof Number) {
+			b = ((Number) b).doubleValue();
+		}
+
+		boolean successful = Objects.equals(a, b) == positive;
+
 		if (successful) {
 			for (Code child : getChildren()) {
 				ExecutionResult result = child.execute();

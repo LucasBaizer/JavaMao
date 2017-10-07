@@ -4,8 +4,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import com.mao.ui.Processing;
-import com.mao.ui.UICard;
+import com.mao.client.Processing;
+import com.mao.client.UICard;
 
 public class Player extends NetworkedObject {
 	private String username;

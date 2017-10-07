@@ -14,12 +14,17 @@ import org.jnetwork.TCPServer;
 public class NetworkServer extends Network {
 	private ArrayList<TCPConnection> clients = new ArrayList<>();
 	private TCPServer server;
+	private int port;
+	
+	public NetworkServer(int port) {
+		this.port = port;
+	}
 
 	@SuppressWarnings("unchecked")
 	@Override
 	protected void onInitialize() {
 		Debug.log("Starting server...");
-		server = new TCPServer(1337, (data) -> {
+		server = new TCPServer(port, (data) -> {
 			try {
 				TCPConnection client = (TCPConnection) data.getConnection();
 
