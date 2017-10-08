@@ -6,7 +6,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.mao.Card;
+import com.mao.Debug;
 import com.mao.Game;
+import com.mao.Lobby;
+import com.mao.Network;
 import com.mao.Player;
 import com.mao.RuleHandler;
 import com.mao.lang.Code;
@@ -16,28 +19,23 @@ import com.mao.lang.SayCommand;
 import processing.core.PApplet;
 
 public class MainClient {
+	public static String username = "User123";
+	public static Lobby lobby;
 	public static Player player;
 
 	public static void main(String[] args) throws IOException {
-		PApplet.main("com.mao.client.Processing");
+		Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+			Processing.getProcessing().setGameState(-1);
+			Network.deinitialize();
+			try {
+				Thread.sleep(1000);
+			} catch (InterruptedException e) {
+				Debug.error("Error while exiting game!", e);
+			}
+			Debug.log("Gracefully closed all connections, exiting process complete! Goodbye!");
+		}));
 
-		/*
-		 * try { Thread.sleep(1000); } catch (InterruptedException e) {
-		 * e.printStackTrace(); }
-		 * 
-		 * player = new Player(); player.initialize("Lucas");
-		 * 
-		 * Debug.log("Hello, my name is " + player.getUsername() + "!");
-		 * 
-		 * for (int i = 0; i < 4; i++) {
-		 * player.addCard(Game.getGame().getCardFromDeck()); }
-		 * 
-		 * player.update(); if (Game.getGame().getCurrentPlayerUsername() ==
-		 * null) {
-		 * Game.getGame().setCurrentPlayerUsername(player.getUsername());
-		 * Debug.log("It is now " + player.getUsername() + "'s turn."); }
-		 * Game.getGame().update();
-		 */
+		PApplet.main("com.mao.client.Processing");
 	}
 
 	public static List<String> callEvent(Player player, Card card, String event) {

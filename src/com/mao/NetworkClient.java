@@ -8,26 +8,35 @@ import java.net.SocketException;
 import org.jnetwork.DataPackage;
 import org.jnetwork.TCPConnection;
 
+import com.mao.client.MainClient;
+
 public class NetworkClient extends Network {
 	private TCPConnection client;
+	private int port;
+	private boolean gracefulExit;
+
+	public NetworkClient(int port) {
+		this.port = port;
+	}
 
 	@SuppressWarnings("unchecked")
 	@Override
 	protected void onInitialize() {
 		Debug.log("Initializing client network connection...");
 		try {
-			client = new TCPConnection("localhost", 1337);
+			client = new TCPConnection("localhost", port);
 		} catch (IOException e) {
 			Debug.error("Error while opening TCP connection!", e);
 			System.exit(1);
 		}
-		Debug.log("Connected!");
-
-		Game.getGame();
+		Debug.log("Connected successfully to localhost:" + port + ".");
 
 		Thread receiveThread = new Thread(() -> {
-			while (!Thread.currentThread().isInterrupted()) {
-				try {
+			try {
+				client.writeUnshared(new DataPackage(MainClient.lobby == null ? null : MainClient.lobby.getName())
+						.setMessage("INIT_PACKAGE"));
+
+				while (!Thread.currentThread().isInterrupted()) {
 					DataPackage in = (DataPackage) client.readUnshared();
 					if (in.getMessage().equals("GAME_DATA")) {
 						int netID = (int) in.getObjects()[0];
@@ -52,21 +61,27 @@ public class NetworkClient extends Network {
 						NetworkedObject object = (NetworkedObject) ((Class<? extends NetworkedObject>) in
 								.getObjects()[0]).newInstance();
 						if (object instanceof Game) {
-							Game.setGame((Game) object);
-						} else if(object instanceof RuleHandler) {
-							RuleHandler.setRuleHandler((RuleHandler) object);
+							Game.setGame(MainClient.lobby.getName(), (Game) object);
+						} else if (object instanceof RuleHandler) {
+							RuleHandler.setRuleHandler(MainClient.lobby.getName(), (RuleHandler) object);
 						}
 						object.setUniqueID((long) in.getObjects()[1]);
 						registerUnsharedObject(object);
 						Debug.log("Registered incoming object of type " + object.getClass().getSimpleName() + ".");
 					}
-				} catch (SocketException | EOFException e) {
+				}
+			} catch (SocketException | EOFException e) {
+				if (gracefulExit) {
+					gracefulExit = false;
+					Debug.log("Gracefully disconnected from server.");
+					return;
+				} else {
 					Debug.error("Server forcefully closed connection, exiting!");
-					System.exit(-1);
-				} catch (Exception e) {
-					Debug.error("Error while reading server data!", e);
 					System.exit(1);
 				}
+			} catch (Exception e) {
+				Debug.error("Error while reading server data!", e);
+				System.exit(1);
 			}
 		});
 		receiveThread.start();
@@ -106,6 +121,17 @@ public class NetworkClient extends Network {
 		} catch (IOException e) {
 			Debug.error("Error while writing client data to server!", e);
 			System.exit(1);
+		}
+	}
+
+	@Override
+	public void destroy() {
+		gracefulExit = true;
+
+		try {
+			client.close();
+		} catch (IOException e) {
+			Debug.error("Error while destroying network!", e);
 		}
 	}
 }

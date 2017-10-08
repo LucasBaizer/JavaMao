@@ -1,36 +1,51 @@
 package com.mao;
 
+import java.awt.Color;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Random;
 import java.util.Stack;
 
+import com.mao.client.MainClient;
+import com.mao.client.Processing;
+
 public class Game extends NetworkedObject {
 	private static final Random random = new Random();
-	private static Game inst;
+	private static HashMap<String, Game> instances = new HashMap<>();;
 
 	public static Random getRandomInstance() {
 		return random;
 	}
 
+	public static Game getGame(String lobby) {
+		return instances.get(lobby);
+	}
+
 	public static Game getGame() {
-		return inst;
+		if (Network.isClient()) {
+			return getGame(MainClient.lobby.getName());
+		} else if (!Network.isInitialized()) {
+			throw new RuntimeException(
+					"A getGame() call was attempted, but the network has not been initialized. This is likely not an error.");
+		}
+		throw new RuntimeException("getGame() can only be called on a client; use getGame(String) instead");
 	}
 
 	private ArrayList<Card> playedCards = new ArrayList<>();
 	private Stack<Card> deck = new Stack<>();
 	private String currentPlayerUsername;
 
-	public static Game initialize() {
+	public static Game initialize(String lobbyName) {
 		Game game = new Game();
-		inst = game;
+		instances.put(lobbyName, game);
 		Network.getNetwork().registerObject(game);
 		return game;
 	}
 
-	public static void setGame(Game game) {
-		inst = game;
+	public static void setGame(String lobby, Game game) {
+		instances.put(lobby, game);
 	}
 
 	@Override
@@ -67,7 +82,16 @@ public class Game extends NetworkedObject {
 			playedCards.add(data.read());
 		}
 
+		String oldUsername = new String(currentPlayerUsername == null ? "" : currentPlayerUsername);
 		currentPlayerUsername = data.read();
+
+		if (currentPlayerUsername != null && !oldUsername.equals(currentPlayerUsername) && Network.isClient()) {
+			if (MainClient.player.getUsername().equals(currentPlayerUsername)) {
+				Processing.getProcessing().notify("It is your turn.", null, Color.GREEN);
+			} else {
+				Processing.getProcessing().notify("It is " + currentPlayerUsername + "'s turn.", null, Color.WHITE);
+			}
+		}
 
 		Debug.log("GAME: Updated game. Top card is now the {0}. Deck now has {1} cards.",
 				playedCards.get(playedCards.size() - 1), deck.size());

@@ -1,6 +1,7 @@
 package com.mao.client;
 
 import java.awt.Color;
+import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -51,9 +52,9 @@ public class UICard extends UIObject {
 	}
 
 	@Override
-	public boolean mousePressed(Processing g) {
-		boolean pressed = super.mousePressed(g);
-		if (pressed) {
+	public boolean mousePressed(MouseEvent evt, Processing g) {
+		boolean pressed = super.mousePressed(evt, g);
+		if (pressed && !MainClient.lobby.hasUserWon()) {
 			Game.getGame().playCard(card);
 			MainClient.player.removeCard(card);
 
@@ -110,9 +111,14 @@ public class UICard extends UIObject {
 
 					Speech.consume(true);
 
+					if (MainClient.player.getHand().size() == 0) {
+						Processing.getProcessing().notify("You won!", "User won!", Color.GREEN);
+					}
+
 					MainClient.player.update();
 					if (MainClient.player == Player.getCurrentTurnPlayer()) {
 						Game.getGame().setCurrentPlayerUsername(Player.getNextTurnPlayer().getUsername());
+						MainClient.lobby.setUserWon(true);
 					}
 					Game.getGame().update();
 				});

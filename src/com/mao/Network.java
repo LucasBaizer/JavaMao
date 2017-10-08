@@ -15,6 +15,13 @@ public abstract class Network {
 		}
 	}
 
+	public static void deinitialize() {
+		if (instance != null) {
+			instance.destroy();
+			instance = null;
+		}
+	}
+
 	public static Network getNetwork() {
 		return instance;
 	}
@@ -34,12 +41,18 @@ public abstract class Network {
 	public static boolean isClient() {
 		return instance instanceof NetworkClient;
 	}
+	
+	public static boolean isInitialized() {
+		return instance != null;
+	}
 
 	private HashMap<Integer, List<NetworkedObject>> networkedObjects = new HashMap<>();
 
 	protected abstract void onInitialize();
 
 	public abstract void makeUpdate(NetworkedObject object);
+
+	public abstract void destroy();
 
 	public void registerObject(NetworkedObject obj) {
 		List<NetworkedObject> list = networkedObjects.get(obj.getNetworkID());

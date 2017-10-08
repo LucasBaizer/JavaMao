@@ -1,5 +1,7 @@
 package com.mao.client;
 
+import java.awt.event.MouseEvent;
+
 import com.mao.Card;
 import com.mao.Game;
 import com.mao.Player;
@@ -34,9 +36,9 @@ public class UIDeck extends UIObject {
 	}
 
 	@Override
-	public boolean mousePressed(Processing g) {
-		boolean pressed = super.mousePressed(g);
-		if (pressed) {
+	public boolean mousePressed(MouseEvent evt, Processing g) {
+		boolean pressed = super.mousePressed(evt, g);
+		if (pressed && !MainClient.lobby.hasUserWon()) {
 			Card card = Game.getGame().getCardFromDeck();
 			MainClient.player.addCard(card);
 

@@ -4,8 +4,10 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
+import com.mao.client.MainClient;
 import com.mao.client.Speech;
 import com.mao.lang.Code;
 import com.mao.lang.Event;
@@ -16,19 +18,30 @@ import com.mao.lang.SayCommand;
 import voce.SpeechInterface;
 
 public class RuleHandler extends NetworkedObject {
-	private static RuleHandler inst;
+	private static HashMap<String, RuleHandler> instances = new HashMap<>();
+
+	public static RuleHandler getRuleHandler(String lobby) {
+		return instances.get(lobby);
+	}
 
 	public static RuleHandler getRuleHandler() {
-		return inst;
+		if (Network.isClient()) {
+			return getRuleHandler(MainClient.lobby.getName());
+		} else if (!Network.isInitialized()) {
+			throw new RuntimeException(
+					"A getRuleHandler() call was attempted, but the network has not been initialized. This is likely not an error.");
+		}
+		throw new RuntimeException(
+				"getRuleHandler() can only be called on a client; use getRuleHandler(String) instead");
 	}
 
-	public static void setRuleHandler(RuleHandler object) {
-		inst = object;
+	public static void setRuleHandler(String lobby, RuleHandler object) {
+		instances.put(lobby, object);
 	}
 
-	public static RuleHandler initialize() {
+	public static RuleHandler initialize(String lobby) {
 		RuleHandler game = new RuleHandler();
-		inst = game;
+		instances.put(lobby, game);
 		Network.getNetwork().registerObject(game);
 		return game;
 	}
@@ -81,7 +94,7 @@ public class RuleHandler extends NetworkedObject {
 	@Override
 	public void readNetworkedData(NetworkedData data) {
 		rules.clear();
-		
+
 		SpeechInterface.destroy();
 
 		try {
@@ -113,7 +126,7 @@ public class RuleHandler extends NetworkedObject {
 		}
 
 		Debug.log("Rules updated. There are now " + rules.size() + " rules in effect.");
-		
+
 		Speech.initialize();
 	}
 }

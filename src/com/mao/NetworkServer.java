@@ -1,6 +1,7 @@
 package com.mao;
 
 import java.io.EOFException;
+import java.io.File;
 import java.io.IOException;
 import java.io.Serializable;
 import java.net.SocketException;
@@ -11,11 +12,13 @@ import org.jnetwork.DataPackage;
 import org.jnetwork.TCPConnection;
 import org.jnetwork.TCPServer;
 
+import com.mao.lang.Program;
+
 public class NetworkServer extends Network {
 	private ArrayList<TCPConnection> clients = new ArrayList<>();
 	private TCPServer server;
 	private int port;
-	
+
 	public NetworkServer(int port) {
 		this.port = port;
 	}
@@ -31,10 +34,51 @@ public class NetworkServer extends Network {
 				Debug.log(client.getRemoteSocketAddress() + " connected.");
 				clients.add(client);
 
+				DataPackage initial = (DataPackage) client.readUnshared();
+				String clientLobbyName = (String) initial.getObjects()[0];
+
+				if (clientLobbyName != null) {
+					Game game = Game.getGame(clientLobbyName);
+					if (game == null) {
+						game = Game.initialize(clientLobbyName);
+
+						for (int i = 0; i < 52; i++) {
+							game.addCardToDeck(Card.of(Face.values()[i % 13], Suit.values()[i / 13]));
+							game.shuffleDeck();
+						}
+						game.playCard(game.getCardFromDeck());
+
+						RuleHandler handler = RuleHandler.initialize(clientLobbyName);
+						try {
+							handler.addRule(Program.compile(new File("rules/turn.mao")));
+							handler.addRule(Program.compile(new File("rules/placement.mao")));
+							handler.addRule(Program.compile(new File("rules/one_card_remaining.mao")));
+							handler.addRule(Program.compile(new File("rules/mao_on_win.mao")));
+							handler.addRule(Program.compile(new File("rules/all_hail_the_queen_of_mao.mao")));
+							handler.addRule(Program.compile(new File("rules/have_a_nice_day.mao")));
+						} catch (Throwable e) {
+							Debug.error("Error while compiling default rules!", e);
+							System.exit(1);
+						}
+					}
+				}
+
 				for (List<NetworkedObject> list : getRegisteredObjects()) {
 					for (NetworkedObject obj : list) {
-						registerObjectOnClient(obj, client);
-						makeUpdate(obj, client);
+						if (obj instanceof Game) {
+							if (obj == Game.getGame(clientLobbyName)) {
+								registerObjectOnClient(obj, client);
+								makeUpdate(obj, client);
+							}
+						} else if (obj instanceof RuleHandler) {
+							if (obj == RuleHandler.getRuleHandler(clientLobbyName)) {
+								registerObjectOnClient(obj, client);
+								makeUpdate(obj, client);
+							}
+						} else {
+							registerObjectOnClient(obj, client);
+							makeUpdate(obj, client);
+						}
 					}
 				}
 
@@ -44,7 +88,7 @@ public class NetworkServer extends Network {
 						int netID = (int) pkg.getObjects()[0];
 						long uniqueID = (long) pkg.getObjects()[1];
 						int netObjects = (int) pkg.getObjects()[2];
-						
+
 						NetworkedData netdata = new NetworkedData();
 						for (int i = 3; i < 3 + netObjects; i++) {
 							netdata.write(pkg.getObjects()[i]);
@@ -55,9 +99,9 @@ public class NetworkServer extends Network {
 								obj.readNetworkedData(netdata);
 
 								if (obj instanceof Player) {
-									Debug.log("Updating player with username " + ((Player) obj).getUsername() + ".");
+									Debug.log("Updated player with username " + ((Player) obj).getUsername() + ".");
 								} else {
-									Debug.log("Updating object of type " + obj.getClass().getSimpleName() + ".");
+									Debug.log("Updated object of type " + obj.getClass().getSimpleName() + ".");
 								}
 							}
 						}
@@ -84,7 +128,7 @@ public class NetworkServer extends Network {
 						Debug.log("Registered object of type " + object.getClass().getSimpleName() + ".");
 					}
 				}
-			} catch(SocketException | EOFException e) {
+			} catch (SocketException | EOFException e) {
 				return;
 			} catch (Exception e) {
 				Debug.error("Error in client thread!", e);
@@ -148,5 +192,14 @@ public class NetworkServer extends Network {
 			data[i] = net.read();
 		}
 		return new DataPackage(data).setMessage("GAME_DATA");
+	}
+
+	@Override
+	public void destroy() {
+		try {
+			server.close();
+		} catch (IOException e) {
+			Debug.error("Error while closing server!", e);
+		}
 	}
 }

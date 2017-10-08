@@ -3,6 +3,7 @@ package com.mao.client;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.event.KeyEvent;
+import java.awt.event.MouseEvent;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -25,10 +26,11 @@ public class Processing extends PApplet {
 
 	public static final int GAME_STATE_MAIN_MENU = 0;
 	public static final int GAME_STATE_LOBBY_MENU = 1;
-	public static final int GAME_STATE_JOINED_LOBBY = 2;
-	public static final int GAME_STATE_CREATE_LOBBY = 3;
-	public static final int GAME_STATE_CREATED_LOBBY = 4;
-	public static final int GAME_STATE_IN_GAME = 5;
+	public static final int GAME_STATE_JOIN_LOBBY = 2;
+	public static final int GAME_STATE_JOINED_LOBBY = 3;
+	public static final int GAME_STATE_CREATE_LOBBY = 4;
+	public static final int GAME_STATE_CREATED_LOBBY = 5;
+	public static final int GAME_STATE_IN_GAME = 6;
 
 	private int gameState = GAME_STATE_MAIN_MENU;
 	private UIState uiState = new UIMainMenu();
@@ -66,7 +68,9 @@ public class Processing extends PApplet {
 
 	public UIObject removeUIObject(long id) {
 		synchronized (objects) {
-			return objects.remove(id);
+			UIObject object = objects.remove(id);
+			sortObjects();
+			return object;
 		}
 	}
 
@@ -93,8 +97,12 @@ public class Processing extends PApplet {
 	public void notify(String message, String otherMessage, Color color) {
 		addUIObject(new UINotification(message, color));
 
-		Network.getNetworkClient().registerObject(new NetworkedNotification(
-				MainClient.player.getUsername() + ": " + otherMessage, color == Color.RED ? Color.GREEN : Color.RED));
+		if (otherMessage != null) {
+			NetworkedNotification notification = new NetworkedNotification(MainClient.player.getUsername() + ": " + otherMessage,
+					color == Color.RED ? Color.GREEN : Color.RED);
+			Network.getNetworkClient().registerObject(notification);
+			Network.getNetworkClient().makeUpdate(notification);
+		}
 	}
 
 	@Override
@@ -102,7 +110,7 @@ public class Processing extends PApplet {
 		frame.setTitle("The Game of Mao");
 		frame.setResizable(true);
 
-		File folder = new File("src/data/assets/images/");
+		File folder = new File(System.getenv("IS_IN_IDE") != null ? "src/data/assets/images/" : "assets/images");
 		for (File image : folder.listFiles()) {
 			if (image.getName().endsWith("png")) {
 				images.put(image.getName().split(Pattern.quote("."))[0], loadImage("assets/images/" + image.getName()));
@@ -121,7 +129,10 @@ public class Processing extends PApplet {
 		shouldLock = false;
 
 		states.put(GAME_STATE_MAIN_MENU, uiState);
+		states.put(GAME_STATE_JOINED_LOBBY, new UIJoinedLobby());
+		states.put(GAME_STATE_JOIN_LOBBY, new UILobbyPrompt());
 		states.put(GAME_STATE_CREATE_LOBBY, new UICreateLobby());
+		states.put(GAME_STATE_CREATED_LOBBY, new UICreatedLobby());
 		states.put(GAME_STATE_LOBBY_MENU, new UILobbyList());
 		states.put(GAME_STATE_IN_GAME, new UIGame());
 
@@ -155,12 +166,12 @@ public class Processing extends PApplet {
 	}
 
 	@Override
-	public void mousePressed() {
+	public void mousePressed(MouseEvent e) {
 		synchronized (objects) {
 			UIObject[] values = objects.values().toArray(new UIObject[objects.size()]);
 			Arrays.sort(values, Comparator.reverseOrder());
 			for (UIObject object : values) {
-				if (object.mousePressed(this)) {
+				if (object.mousePressed(e, this)) {
 					break;
 				}
 			}

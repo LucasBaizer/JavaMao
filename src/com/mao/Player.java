@@ -8,15 +8,16 @@ import com.mao.client.Processing;
 import com.mao.client.UICard;
 
 public class Player extends NetworkedObject {
-	private String username;
+	public String username;
 	private ArrayList<Card> hand = new ArrayList<>();
 
-	public void initialize(String username) {
+	public Player initialize(String username) {
 		if (Network.isClient()) {
 			this.username = username;
 			Network.getNetworkClient().registerObject(this);
 			Network.getNetworkClient().makeUpdate(this);
 		}
+		return this;
 	}
 
 	@Override

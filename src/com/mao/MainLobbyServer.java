@@ -1,6 +1,6 @@
 package com.mao;
 
-public class MainMatchServer {
+public class MainLobbyServer {
 	public static void main(String[] args) {
 		Network.initialize(new NetworkServer(1338));
 

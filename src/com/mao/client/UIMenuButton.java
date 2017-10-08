@@ -1,5 +1,7 @@
 package com.mao.client;
 
+import java.awt.event.MouseEvent;
+
 public class UIMenuButton extends UIObject {
 	public static final int SORTING_POSITION_START = 0;
 	public static final int MENU_BUTTONS = 3;
@@ -34,8 +36,8 @@ public class UIMenuButton extends UIObject {
 	}
 
 	@Override
-	public boolean mousePressed(Processing g) {
-		boolean pressed = super.mousePressed(g);
+	public boolean mousePressed(MouseEvent evt, Processing g) {
+		boolean pressed = super.mousePressed(evt, g);
 		if (pressed) {
 			action.run();
 		}
