@@ -118,7 +118,6 @@ public class UICard extends UIObject {
 					MainClient.player.update();
 					if (MainClient.player == Player.getCurrentTurnPlayer()) {
 						Game.getGame().setCurrentPlayerUsername(Player.getNextTurnPlayer().getUsername());
-						MainClient.lobby.setUserWon(true);
 					}
 					Game.getGame().update();
 				});
