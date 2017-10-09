@@ -46,7 +46,7 @@ public class MainClient {
 			Debug.log("Gracefully closed all connections, exiting process complete! Goodbye!");
 		}));
 
-		server = JOptionPane.showInputDialog("Please enter the server's IP: ");
+		server = JOptionPane.showInputDialog("Please enter the server's IP: ").trim();
 		PApplet.main("com.mao.client.Processing");
 	}
 
