@@ -5,6 +5,10 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.swing.JOptionPane;
+import javax.swing.UIManager;
+import javax.swing.UnsupportedLookAndFeelException;
+
 import com.mao.Card;
 import com.mao.Debug;
 import com.mao.Game;
@@ -19,11 +23,18 @@ import com.mao.lang.SayCommand;
 import processing.core.PApplet;
 
 public class MainClient {
+	public static String server;
 	public static String username = "User123";
 	public static Lobby lobby;
 	public static Player player;
 
 	public static void main(String[] args) throws IOException {
+		try {
+			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+		} catch (ClassNotFoundException | InstantiationException | IllegalAccessException
+				| UnsupportedLookAndFeelException e1) {
+			e1.printStackTrace();
+		}
 		Runtime.getRuntime().addShutdownHook(new Thread(() -> {
 			Processing.getProcessing().setGameState(-1);
 			Network.deinitialize();
@@ -35,6 +46,7 @@ public class MainClient {
 			Debug.log("Gracefully closed all connections, exiting process complete! Goodbye!");
 		}));
 
+		server = JOptionPane.showInputDialog("Please enter the server's IP: ");
 		PApplet.main("com.mao.client.Processing");
 	}
 
