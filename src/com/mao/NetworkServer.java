@@ -26,7 +26,7 @@ public class NetworkServer extends Network {
 	@SuppressWarnings("unchecked")
 	@Override
 	protected void onInitialize() {
-		Debug.log("Starting server...");
+		Debug.log("Starting server on port " + port + "...");
 		server = new TCPServer(port, (data) -> {
 			try {
 				TCPConnection client = (TCPConnection) data.getConnection();
