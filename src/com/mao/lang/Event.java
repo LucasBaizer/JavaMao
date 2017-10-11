@@ -111,6 +111,7 @@ public class Event extends CodeBlock {
 		}));
 		addMethod(new Method("Math::random", 0, (in) -> Math.random()));
 		addMethod(new Method("Math::pow", 2, (in) -> Math.pow((double) in[0], (double) in[1])));
+		addMethod(new Method("Math::sqrt", 1, (in) -> Math.sqrt((double) in[0])));
 		addMethod(new Method("Math::abs", 1, (in) -> Math.abs((double) in[0])));
 		addMethod(new Method("Math::max", 2, (in) -> Math.max((double) in[0], (double) in[1])));
 		addMethod(new Method("Math::min", 2, (in) -> Math.min((double) in[0], (double) in[1])));
