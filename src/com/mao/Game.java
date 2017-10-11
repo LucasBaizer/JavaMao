@@ -28,7 +28,7 @@ public class Game extends NetworkedObject {
 			return getGame(MainClient.lobby.getName());
 		} else if (!Network.isInitialized()) {
 			throw new RuntimeException(
-					"A getGame() call was attempted, but the network has not been initialized. This is likely not an error.");
+					"A getGame() call was attempted, but the network has not been initialized.");
 		}
 		throw new RuntimeException("getGame() can only be called on a client; use getGame(String) instead");
 	}

@@ -41,7 +41,7 @@ public abstract class Network {
 	public static boolean isClient() {
 		return instance instanceof NetworkClient;
 	}
-	
+
 	public static boolean isInitialized() {
 		return instance != null;
 	}
@@ -65,7 +65,12 @@ public abstract class Network {
 	}
 
 	public List<NetworkedObject> getObjects(int objectID) {
-		return networkedObjects.get(objectID);
+		List<NetworkedObject> objects = networkedObjects.get(objectID);
+		if (objects == null) {
+			Debug.error("Attempted to get objects with ID " + objectID + ", but none were found.");
+			return new ArrayList<>();
+		}
+		return objects;
 	}
 
 	public Collection<List<NetworkedObject>> getRegisteredObjects() {

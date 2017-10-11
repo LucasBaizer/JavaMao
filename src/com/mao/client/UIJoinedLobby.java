@@ -16,7 +16,7 @@ public class UIJoinedLobby implements UIState {
 				} catch (InterruptedException e) {
 					e.printStackTrace();
 				}
-				Network.initialize(new NetworkClient(1337));
+				Network.initialize(new NetworkClient(80));
 				try {
 					Thread.sleep(1000 * (MainClient.lobby.getJoinedUsers().indexOf(MainClient.username) + 1));
 				} catch (InterruptedException e) {

@@ -24,12 +24,12 @@ public class NetworkClient extends Network {
 	protected void onInitialize() {
 		Debug.log("Initializing client network connection...");
 		try {
-			client = new TCPConnection("localhost", port);
+			client = new TCPConnection(MainClient.server, port);
 		} catch (IOException e) {
 			Debug.error("Error while opening TCP connection!", e);
 			System.exit(1);
 		}
-		Debug.log("Connected successfully to localhost:" + port + ".");
+		Debug.log("Connected successfully to " + MainClient.server + ":" + port + ".");
 
 		Thread receiveThread = new Thread(() -> {
 			try {
