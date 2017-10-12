@@ -29,4 +29,18 @@ public class ParseUtilities {
 		}
 		return closePos;
 	}
+
+	public static int findClosing(char[] text, char open, char close, int openPos) {
+		int closePos = openPos;
+		int counter = 1;
+		while (counter > 0) {
+			char c = text[++closePos];
+			if (c == open) {
+				counter++;
+			} else if (c == close) {
+				counter--;
+			}
+		}
+		return closePos;
+	}
 }
