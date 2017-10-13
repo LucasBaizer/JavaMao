@@ -13,7 +13,7 @@ public class EditorFrame extends JFrame {
 		return instance;
 	}
 	
-	private Program program = Program.compile("", false);
+	private Program program = Program.compile("Event::CardPlaced {}", false);
 
 	public EditorFrame() {
 		super("MSL Rule Editor");

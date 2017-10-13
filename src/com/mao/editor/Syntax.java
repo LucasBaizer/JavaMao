@@ -34,7 +34,11 @@ public final class Syntax {
 		SyntaxHighlighting blue = new SyntaxHighlighting(Color.BLUE, Font.PLAIN);
 		SyntaxHighlighting darkBlue = new SyntaxHighlighting(Color.BLUE, Font.BOLD);
 		SyntaxHighlighting purple = new SyntaxHighlighting(new Color(127, 0, 85), Font.BOLD);
+		SyntaxHighlighting orange = new SyntaxHighlighting(new Color(255, 120, 0), Font.BOLD);
 
+		for (String event : Event.EVENT_TYPES) {
+			keywords.put("Event::" + event, orange);
+		}
 		for (String str : defaultPurpleKeywords) {
 			keywords.put(str, purple);
 		}

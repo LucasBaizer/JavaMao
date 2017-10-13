@@ -37,6 +37,7 @@ public class MenuFile extends JMenu {
 					Syntax.getSyntax().setSyntax(EditorFrame.getFrame().getProgram());
 					TextEditorDocumentListener.getListener().highlightSyntax();
 				} catch (RuntimeException e) {
+					e.printStackTrace();
 					JOptionPane.showMessageDialog(null, e.getMessage());
 				}
 			}
@@ -52,6 +53,7 @@ public class MenuFile extends JMenu {
 					EditorFrame.getFrame()
 							.setProgram(Program.compile(EditorPanel.getPanel().getTextPane().getText(), true));
 				} catch (RuntimeException e) {
+					e.printStackTrace();
 					JOptionPane.showMessageDialog(null, e.getMessage() + "\n\nPlease fix this before saving.");
 					return;
 				}
@@ -97,7 +99,60 @@ public class MenuFile extends JMenu {
 		saveAs.setAccelerator(
 				KeyStroke.getKeyStroke(KeyEvent.VK_S, KeyEvent.CTRL_DOWN_MASK | KeyEvent.SHIFT_DOWN_MASK));
 
+		JMenuItem save = new JMenuItem(new AbstractAction("Save") {
+			private static final long serialVersionUID = 3821099206378386091L;
+
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				if (lastSaveLocation == null) {
+					saveAs.getAction().actionPerformed(null);
+				} else {
+					try {
+						EditorFrame.getFrame()
+								.setProgram(Program.compile(EditorPanel.getPanel().getTextPane().getText(), true));
+					} catch (RuntimeException e) {
+						e.printStackTrace();
+						JOptionPane.showMessageDialog(null, e.getMessage() + "\n\nPlease fix this before saving.");
+						return;
+					}
+
+					try {
+						Files.write(lastSaveLocation.toPath(),
+								EditorPanel.getPanel().getTextPane().getText().getBytes("UTF-8"));
+					} catch (IOException e) {
+						JOptionPane.showMessageDialog(null, "Failed to save: " + e.getMessage());
+					}
+				}
+			}
+		});
+		save.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, KeyEvent.CTRL_DOWN_MASK));
+
 		add(compile);
+		add(save);
 		add(saveAs);
+
+		if (MainEditor.internallyLaunched()) {
+			JMenuItem export = new JMenuItem(new AbstractAction("Export To Game") {
+				private static final long serialVersionUID = -7554911227679957133L;
+
+				@Override
+				public void actionPerformed(ActionEvent evt) {
+					try {
+						EditorFrame.getFrame()
+								.setProgram(Program.compile(EditorPanel.getPanel().getTextPane().getText(), true));
+						JOptionPane.showMessageDialog(null, "Compiled successfully!");
+
+						MainEditor.getCallback().programCompleted(EditorFrame.getFrame().getProgram());
+
+						EditorFrame.getFrame().dispose();
+					} catch (RuntimeException e) {
+						JOptionPane.showMessageDialog(null, e.getMessage());
+					}
+				}
+			});
+			export.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_E, KeyEvent.CTRL_DOWN_MASK));
+
+			add(export);
+		}
 	}
 }
