@@ -7,27 +7,53 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map.Entry;
+
+import com.mao.lang.Event;
+import com.mao.lang.Method;
+import com.mao.lang.Program;
+import com.mao.lang.Variable;
+
 import java.util.Set;
 
 public final class Syntax {
 	private static final List<String> defaultPurpleKeywords = new ArrayList<>(Arrays.asList("if", "for", "break",
 			"return", "exit", "say", "penalize", "var", "const", "global", "function", "true", "false"));
-	private static final HashMap<String, SyntaxHighlighting> keywords = new HashMap<>();
+	private HashMap<String, SyntaxHighlighting> keywords = new HashMap<>();
 
 	private static final Syntax syntax = new Syntax();
-
-	static {
-		SyntaxHighlighting purple = new SyntaxHighlighting(new Color(127, 0, 85), Font.BOLD);
-		for (String str : defaultPurpleKeywords) {
-			keywords.put(str, purple);
-		}
-	}
 
 	public static Syntax getSyntax() {
 		return syntax;
 	}
 
 	private Syntax() {
+		setSyntax(EditorFrame.getFrame().getProgram());
+	}
+
+	public void setSyntax(Program program) {
+		SyntaxHighlighting blue = new SyntaxHighlighting(Color.BLUE, Font.PLAIN);
+		SyntaxHighlighting darkBlue = new SyntaxHighlighting(Color.BLUE, Font.BOLD);
+		SyntaxHighlighting purple = new SyntaxHighlighting(new Color(127, 0, 85), Font.BOLD);
+
+		for (String str : defaultPurpleKeywords) {
+			keywords.put(str, purple);
+		}
+		keywords.put("#register", new SyntaxHighlighting(new Color(0, 150, 0), Font.BOLD));
+		for (Event event : program.getRegisteredEvents()) {
+			for (Variable var : event.getVariables()) {
+				// if (var.isConstant()) {
+				String name = var.getName();
+				// if (name.toUpperCase().equals(name)) {
+				keywords.put(name, darkBlue);
+				// } else {
+				// keywords.put(name, blue);
+				// }
+				// }
+			}
+			for (Method method : event.getMethods()) {
+				keywords.put(method.getName(), blue);
+			}
+		}
 	}
 
 	public Set<Entry<String, SyntaxHighlighting>> getSyntaxHighlighting() {

@@ -1,6 +1,7 @@
 package com.mao.lang;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 
@@ -21,6 +22,10 @@ public abstract class Code {
 		return var;
 	}
 
+	public Collection<Variable> getVariables() {
+		return variables.values();
+	}
+
 	public void addMethod(Method function) {
 		methods.put(function.getName(), function);
 	}
@@ -31,6 +36,10 @@ public abstract class Code {
 			return parent.getMethod(name);
 		}
 		return func;
+	}
+
+	public Collection<Method> getMethods() {
+		return methods.values();
 	}
 
 	protected Obtainable parseObtainable(String ref) {

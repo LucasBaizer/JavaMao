@@ -61,11 +61,44 @@ public class UICard extends UIObject {
 			List<String> responses = MainClient.callEvent(MainClient.player, card, Event.CARD_PLACED);
 			System.out.println("Responses: " + responses);
 
+			Thread waitThread = new Thread(() -> {
+				UILabel label = new UILabel("Turn ends in 5 seconds...", 48) {
+					@Override
+					public void draw(Processing g) {
+						x = (int) (Screen.getSize().width - (width * 1.1f));
+						y = Screen.getSize().height / 16;
+
+						super.draw(g);
+					}
+				};
+				g.addUIObject(label);
+				for (int i = 5; i > 0; i--) {
+					label.setText("Turn ends in " + i + " seconds...");
+
+					try {
+						Thread.sleep(1000);
+					} catch (InterruptedException e) {
+						e.printStackTrace();
+					}
+				}
+				g.removeUIObject(label);
+
+				if (responses.size() == 0) {
+					MainClient.player.update();
+					if (MainClient.player == Player.getCurrentTurnPlayer()) {
+						Game.getGame().setCurrentPlayerUsername(Player.getNextTurnPlayer().getUsername());
+					}
+					Game.getGame().update();
+				}
+			});
+			waitThread.start();
+
 			if (responses.size() > 0) {
 				Thread thread = new Thread(() -> {
 					Speech.consume(false);
+
 					try {
-						Thread.sleep(5000);
+						waitThread.join();
 					} catch (InterruptedException e) {
 						e.printStackTrace();
 					}
@@ -122,12 +155,6 @@ public class UICard extends UIObject {
 					Game.getGame().update();
 				});
 				thread.start();
-			} else {
-				MainClient.player.update();
-				if (MainClient.player == Player.getCurrentTurnPlayer()) {
-					Game.getGame().setCurrentPlayerUsername(Player.getNextTurnPlayer().getUsername());
-				}
-				Game.getGame().update();
 			}
 		}
 		return pressed;

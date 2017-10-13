@@ -82,13 +82,13 @@ public class Program {
 	public static Program compile(File file) throws IOException {
 		Debug.log("Compiling Mao rule {0}...", file.getName());
 		long time = System.currentTimeMillis();
-		Program result = compile(new String(Files.readAllBytes(file.toPath()), "UTF-8"));
+		Program result = compile(new String(Files.readAllBytes(file.toPath()), "UTF-8"), true);
 		result.name = file.getName().split(Pattern.quote("."))[0];
 		Debug.log("Compiled rule in {0}ms.", System.currentTimeMillis() - time);
 		return result;
 	}
 
-	public static Program compile(String program) {
+	public static Program compile(String program, boolean secure) {
 		program = program.replaceAll("\\/\\*(.+?)\\*\\/", "").replace("\t", "").trim();
 
 		Program prog = new Program();
@@ -129,6 +129,12 @@ public class Program {
 
 			Event evt = new Event(name, event);
 			prog.registerEvent(evt);
+		}
+
+		if (secure) {
+			if (prog.events.size() == 0) {
+				throw new CompilerError("Expecting event subscription; none were found");
+			}
 		}
 
 		return prog;

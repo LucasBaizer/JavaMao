@@ -18,6 +18,11 @@ public class UILabel extends UIObject {
 		
 		g.text(text, x, y);
 	}
+	
+	public UILabel setText(String text) {
+		this.text = text;
+		return this;
+	}
 
 	@Override
 	public int getSortingPosition() {
