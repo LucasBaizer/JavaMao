@@ -38,7 +38,7 @@ public class UIDeck extends UIObject {
 	@Override
 	public boolean mousePressed(MouseEvent evt, Processing g) {
 		boolean pressed = super.mousePressed(evt, g);
-		if (pressed && !MainClient.lobby.hasUserWon()) {
+		if (pressed && !Game.getGame().hasEnded()) {
 			Card card = Game.getGame().getCardFromDeck();
 			MainClient.player.addCard(card);
 

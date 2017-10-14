@@ -8,7 +8,6 @@ public class Lobby extends NetworkedObject {
 	private String owner;
 	private String password;
 	private boolean started;
-	private boolean userWon;
 	private Runnable onUpdate;
 	private ArrayList<String> joined = new ArrayList<>();
 
@@ -108,14 +107,5 @@ public class Lobby extends NetworkedObject {
 
 	public boolean hasStarted() {
 		return started;
-	}
-
-	public boolean hasUserWon() {
-		return userWon;
-	}
-
-	public void setUserWon(boolean userWon) {
-		this.userWon = userWon;
-		Network.getNetwork().makeUpdate(this);
 	}
 }

@@ -37,8 +37,8 @@ public class MenuFile extends JMenu {
 					Syntax.getSyntax().setSyntax(EditorFrame.getFrame().getProgram());
 					TextEditorDocumentListener.getListener().highlightSyntax();
 				} catch (RuntimeException e) {
-					e.printStackTrace();
-					JOptionPane.showMessageDialog(null, e.getMessage());
+					e.printStackTrace(System.out);
+					JOptionPane.showMessageDialog(null, e.getClass().getSimpleName() + ": " + e.getMessage());
 				}
 			}
 		});
@@ -53,8 +53,9 @@ public class MenuFile extends JMenu {
 					EditorFrame.getFrame()
 							.setProgram(Program.compile(EditorPanel.getPanel().getTextPane().getText(), true));
 				} catch (RuntimeException e) {
-					e.printStackTrace();
-					JOptionPane.showMessageDialog(null, e.getMessage() + "\n\nPlease fix this before saving.");
+					e.printStackTrace(System.out);
+					JOptionPane.showMessageDialog(null, e.getClass().getSimpleName() + ": " + e.getMessage()
+							+ "\n\nPlease fix this before saving.");
 					return;
 				}
 
@@ -111,8 +112,9 @@ public class MenuFile extends JMenu {
 						EditorFrame.getFrame()
 								.setProgram(Program.compile(EditorPanel.getPanel().getTextPane().getText(), true));
 					} catch (RuntimeException e) {
-						e.printStackTrace();
-						JOptionPane.showMessageDialog(null, e.getMessage() + "\n\nPlease fix this before saving.");
+						e.printStackTrace(System.out);
+						JOptionPane.showMessageDialog(null, e.getClass().getSimpleName() + ": " + e.getMessage()
+								+ "\n\nPlease fix this before saving.");
 						return;
 					}
 

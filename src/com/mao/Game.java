@@ -27,8 +27,7 @@ public class Game extends NetworkedObject {
 		if (Network.isClient()) {
 			return getGame(MainClient.lobby.getName());
 		} else if (!Network.isInitialized()) {
-			throw new RuntimeException(
-					"A getGame() call was attempted, but the network has not been initialized.");
+			throw new RuntimeException("A getGame() call was attempted, but the network has not been initialized.");
 		}
 		throw new RuntimeException("getGame() can only be called on a client; use getGame(String) instead");
 	}
@@ -36,6 +35,7 @@ public class Game extends NetworkedObject {
 	private ArrayList<Card> playedCards = new ArrayList<>();
 	private Stack<Card> deck = new Stack<>();
 	private String currentPlayerUsername;
+	private boolean gameEnded;
 
 	public static Game initialize(String lobbyName) {
 		Game game = new Game();
@@ -62,6 +62,7 @@ public class Game extends NetworkedObject {
 			data.write(playedCards.get(i));
 		}
 
+		data.write(gameEnded);
 		data.write(currentPlayerUsername);
 
 		return data;
@@ -80,6 +81,12 @@ public class Game extends NetworkedObject {
 		int playedCardsSize = data.read();
 		for (int i = 0; i < playedCardsSize; i++) {
 			playedCards.add(data.read());
+		}
+
+		boolean old = gameEnded;
+		gameEnded = data.read();
+		if (old != gameEnded) {
+			onEndedStateChanged();
 		}
 
 		String oldUsername = new String(currentPlayerUsername == null ? "" : currentPlayerUsername);
@@ -151,5 +158,25 @@ public class Game extends NetworkedObject {
 
 	public void setCurrentPlayerUsername(String currentPlayerUsername) {
 		this.currentPlayerUsername = currentPlayerUsername;
+	}
+
+	public boolean hasEnded() {
+		return gameEnded;
+	}
+
+	public void setGameEnded(boolean gameEnded) {
+		this.gameEnded = gameEnded;
+	}
+
+	private Runnable onEndedStateChanged;
+
+	public void onEndedStateChanged(Runnable callback) {
+		onEndedStateChanged = callback;
+	}
+	
+	public void onEndedStateChanged() {
+		if(onEndedStateChanged != null) {
+			onEndedStateChanged.run();
+		}
 	}
 }

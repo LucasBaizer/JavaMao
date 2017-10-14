@@ -95,38 +95,49 @@ public class RuleHandler extends NetworkedObject {
 	public void readNetworkedData(NetworkedData data) {
 		rules.clear();
 
-		SpeechInterface.destroy();
+		if (Network.isClient()) {
+			SpeechInterface.destroy();
+		}
 
 		try {
-			File grammar = new File(Speech.GRAMMAR_PATH + File.separator + Speech.GRAMMAR_NAME + ".gram");
-			grammar.delete();
-			grammar.createNewFile();
+			FileWriter out = null;
+			if (Network.isClient()) {
+				File grammar = new File(Speech.GRAMMAR_PATH + File.separator + Speech.GRAMMAR_NAME + ".gram");
+				grammar.delete();
+				grammar.createNewFile();
 
-			FileWriter out = new FileWriter(grammar, true);
-			out.write("#JSGF V1.0;" + System.lineSeparator());
-			out.write("grammar mao;" + System.lineSeparator());
-			out.write("public <mao_gramar> = ");
+				out = new FileWriter(grammar, true);
+				out.write("#JSGF V1.0;" + System.lineSeparator());
+				out.write("grammar mao;" + System.lineSeparator());
+				out.write("public <mao_gramar> = ");
+			}
 
 			int rulesSize = data.read();
 			for (int i = 0; i < rulesSize; i++) {
 				Program program = Program.readFromNetworkData(data);
-				for (String saying : program.getRegisteredSayings()) {
-					out.write(saying.toLowerCase().replace(".", "").replace(",", "").replace("?", "").replace("!", "")
-							.trim()
-							+ (i == rulesSize - 1 && program.getRegisteredSayings()
-									.indexOf(saying) == program.getRegisteredSayings().size() - 1 ? ";" : " | "));
+				if (Network.isClient()) {
+					for (String saying : program.getRegisteredSayings()) {
+						out.write(saying.toLowerCase().replace(".", "").replace(",", "").replace("?", "")
+								.replace("!", "").trim()
+								+ (i == rulesSize - 1 && program.getRegisteredSayings()
+										.indexOf(saying) == program.getRegisteredSayings().size() - 1 ? ";" : " | "));
+					}
 				}
 				addRule(program);
 			}
 
-			out.flush();
-			out.close();
+			if (Network.isClient()) {
+				out.flush();
+				out.close();
+			}
 		} catch (IOException e) {
 			Debug.error("Error while updating rules!", e);
 		}
 
 		Debug.log("Rules updated. There are now " + rules.size() + " rules in effect.");
 
-		Speech.initialize();
+		if (Network.isClient()) {
+			Speech.initialize();
+		}
 	}
 }

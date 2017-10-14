@@ -45,14 +45,12 @@ public final class Syntax {
 		keywords.put("#register", new SyntaxHighlighting(new Color(0, 150, 0), Font.BOLD));
 		for (Event event : program.getRegisteredEvents()) {
 			for (Variable var : event.getVariables()) {
-				// if (var.isConstant()) {
 				String name = var.getName();
-				// if (name.toUpperCase().equals(name)) {
-				keywords.put(name, darkBlue);
-				// } else {
-				// keywords.put(name, blue);
-				// }
-				// }
+				if (var.isConstant()) {
+					keywords.put(name, darkBlue);
+				} else {
+					keywords.put(name, blue);
+				}
 			}
 			for (Method method : event.getMethods()) {
 				keywords.put(method.getName(), blue);

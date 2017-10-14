@@ -8,17 +8,16 @@ import com.mao.client.ProgramCallback;
 
 public class MainEditor {
 	private static ProgramCallback callback;
+	private static Thread thread;
 
 	public static void main(String[] args) {
-		mainInternal((program) -> {
-			System.out.println(program);
-		});
+		mainInternal(null);
 	}
 
 	public static void mainInternal(ProgramCallback callback) {
 		MainEditor.callback = callback;
 
-		Thread thread = new Thread(() -> {
+		thread = new Thread(() -> {
 			try {
 				UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
 			} catch (ClassNotFoundException | InstantiationException | IllegalAccessException

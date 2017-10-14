@@ -23,9 +23,8 @@ public class VarCommand extends Code {
 				getParent().addVariable(new Variable(name));
 			}
 		} else {
-			Object value = parseObtainable(split[1].trim()).obtain();
 			if (existing == null) {
-				getParent().addVariable(new Variable(name, value).setConstant(constant));
+				getParent().addVariable(new Variable(name).setConstant(constant));
 			}
 		}
 	}

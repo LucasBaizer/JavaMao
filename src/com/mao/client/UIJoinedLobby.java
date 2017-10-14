@@ -23,16 +23,25 @@ public class UIJoinedLobby implements UIState {
 					e.printStackTrace();
 				}
 
-				g.setGameState(Processing.GAME_STATE_IN_GAME);
-				
-				Player player = MainClient.player = new Player().initialize(MainClient.username);
-				for (int i = 0; i < 4; i++) {
-					player.addCard(Game.getGame().getCardFromDeck());
-				}
-
-				player.update();
-				Game.getGame().update();
+				setup(g);
+				Game.getGame().onEndedStateChanged(() -> {
+					if(!Game.getGame().hasEnded()) {
+						setup(g);
+					}
+				});
 			}
 		});
+	}
+	
+	private void setup(Processing g) {
+		g.setGameState(Processing.GAME_STATE_IN_GAME);
+		
+		Player player = MainClient.player = new Player().initialize(MainClient.username);
+		for (int i = 0; i < 4; i++) {
+			player.addCard(Game.getGame().getCardFromDeck());
+		}
+
+		player.update();
+		Game.getGame().update();
 	}
 }

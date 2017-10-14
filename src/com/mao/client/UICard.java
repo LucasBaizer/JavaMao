@@ -8,6 +8,8 @@ import java.util.List;
 import com.mao.Card;
 import com.mao.Game;
 import com.mao.Player;
+import com.mao.RuleHandler;
+import com.mao.editor.MainEditor;
 import com.mao.lang.Event;
 
 import processing.core.PImage;
@@ -54,7 +56,7 @@ public class UICard extends UIObject {
 	@Override
 	public boolean mousePressed(MouseEvent evt, Processing g) {
 		boolean pressed = super.mousePressed(evt, g);
-		if (pressed && !MainClient.lobby.hasUserWon()) {
+		if (pressed && !Game.getGame().hasEnded()) {
 			Game.getGame().playCard(card);
 			MainClient.player.removeCard(card);
 
@@ -145,7 +147,22 @@ public class UICard extends UIObject {
 					Speech.consume(true);
 
 					if (MainClient.player.getHand().size() == 0) {
-						Processing.getProcessing().notify("You won!", "User won!", Color.GREEN);
+						Processing.getProcessing().notify("You won!", "Player won!", Color.GREEN);
+
+						MainEditor.mainInternal((program) -> {
+							RuleHandler.getRuleHandler().addRule(program);
+							RuleHandler.getRuleHandler().update();
+
+							Game.getGame().setGameEnded(false);
+							Game.getGame().update();
+
+							Game.getGame().onEndedStateChanged();
+
+							RuleHandler.getRuleHandler()
+									.readNetworkedData(RuleHandler.getRuleHandler().writeNetworkedData());
+						});
+
+						Game.getGame().setGameEnded(true);
 					}
 
 					MainClient.player.update();

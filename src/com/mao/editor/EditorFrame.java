@@ -1,5 +1,8 @@
 package com.mao.editor;
 
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowListener;
+
 import javax.swing.JFrame;
 
 import com.mao.lang.Program;
@@ -12,7 +15,7 @@ public class EditorFrame extends JFrame {
 	public static EditorFrame getFrame() {
 		return instance;
 	}
-	
+
 	private Program program = Program.compile("Event::CardPlaced {}", false);
 
 	public EditorFrame() {
@@ -20,7 +23,37 @@ public class EditorFrame extends JFrame {
 
 		getContentPane().add(EditorPanel.getPanel());
 		setJMenuBar(MenuBar.getMenuBar());
-		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+
+		addWindowListener(new WindowListener() {
+			@Override
+			public void windowOpened(WindowEvent e) {
+			}
+
+			@Override
+			public void windowIconified(WindowEvent e) {
+			}
+
+			@Override
+			public void windowDeiconified(WindowEvent e) {
+			}
+
+			@Override
+			public void windowDeactivated(WindowEvent e) {
+			}
+
+			@Override
+			public void windowClosing(WindowEvent e) {
+				dispose();
+			}
+
+			@Override
+			public void windowClosed(WindowEvent e) {
+			}
+
+			@Override
+			public void windowActivated(WindowEvent e) {
+			}
+		});
 
 		instance = this;
 	}
