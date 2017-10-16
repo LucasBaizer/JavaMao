@@ -13,7 +13,8 @@ import com.mao.client.Processing;
 
 public class Game extends NetworkedObject {
 	private static final Random random = new Random();
-	private static HashMap<String, Game> instances = new HashMap<>();;
+	private static HashMap<String, Game> instances = new HashMap<>();
+	private static Runnable onSetupIndexChangedDefault;
 
 	public static Random getRandomInstance() {
 		return random;
@@ -32,10 +33,19 @@ public class Game extends NetworkedObject {
 		throw new RuntimeException("getGame() can only be called on a client; use getGame(String) instead");
 	}
 
+	public static void setOnSetupIndexChangedDefault(Runnable runnable) {
+		onSetupIndexChangedDefault = runnable;
+	}
+
+	public static Runnable getOnSetupIndexChangedDefault() {
+		return onSetupIndexChangedDefault;
+	}
+
 	private ArrayList<Card> playedCards = new ArrayList<>();
 	private Stack<Card> deck = new Stack<>();
 	private String currentPlayerUsername;
 	private boolean gameEnded;
+	private int setupIndex;
 
 	public static Game initialize(String lobbyName) {
 		Game game = new Game();
@@ -44,8 +54,9 @@ public class Game extends NetworkedObject {
 		return game;
 	}
 
-	public static void setGame(String lobby, Game game) {
+	public static Game setGame(String lobby, Game game) {
 		instances.put(lobby, game);
+		return game;
 	}
 
 	@Override
@@ -98,6 +109,10 @@ public class Game extends NetworkedObject {
 			} else {
 				Processing.getProcessing().notify("It is " + currentPlayerUsername + "'s turn.", null, Color.WHITE);
 			}
+		}
+
+		if (setupIndex != 0) {
+			onSetupIndexChanged();
 		}
 
 		Debug.log("GAME: Updated game. Top card is now the {0}. Deck now has {1} cards.",
@@ -173,10 +188,30 @@ public class Game extends NetworkedObject {
 	public void onEndedStateChanged(Runnable callback) {
 		onEndedStateChanged = callback;
 	}
-	
+
 	public void onEndedStateChanged() {
-		if(onEndedStateChanged != null) {
+		if (onEndedStateChanged != null) {
 			onEndedStateChanged.run();
+		}
+	}
+
+	public int getSetupIndex() {
+		return setupIndex;
+	}
+
+	public void incrementSetupIndex() {
+		setupIndex++;
+	}
+
+	private Runnable onSetupIndexChanged;
+
+	public void onSetupIndexChanged(Runnable callback) {
+		onSetupIndexChanged = callback;
+	}
+
+	public void onSetupIndexChanged() {
+		if (onSetupIndexChanged != null) {
+			onSetupIndexChanged.run();
 		}
 	}
 }

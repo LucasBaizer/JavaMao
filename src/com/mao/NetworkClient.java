@@ -61,7 +61,9 @@ public class NetworkClient extends Network {
 						NetworkedObject object = (NetworkedObject) ((Class<? extends NetworkedObject>) in
 								.getObjects()[0]).newInstance();
 						if (object instanceof Game) {
-							Game.setGame(MainClient.lobby.getName(), (Game) object);
+							Game game = Game.setGame(MainClient.lobby.getName(), (Game) object);
+							game.onSetupIndexChanged(Game.getOnSetupIndexChangedDefault());
+							Game.setOnSetupIndexChangedDefault(null);
 						} else if (object instanceof RuleHandler) {
 							RuleHandler.setRuleHandler(MainClient.lobby.getName(), (RuleHandler) object);
 						}

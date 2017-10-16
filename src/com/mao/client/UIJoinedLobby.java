@@ -16,17 +16,18 @@ public class UIJoinedLobby implements UIState {
 				} catch (InterruptedException e) {
 					e.printStackTrace();
 				}
-				Network.initialize(new NetworkClient(80));
-				try {
-					Thread.sleep(4000 * (MainClient.lobby.getJoinedUsers().indexOf(MainClient.username) + 1));
-				} catch (InterruptedException e) {
-					e.printStackTrace();
-				}
 
-				setup(g);
-				Game.getGame().onEndedStateChanged(() -> {
-					if (!Game.getGame().hasEnded()) {
+				Network.initialize(new NetworkClient(80));
+
+				int index = MainClient.lobby.getJoinedUsers().indexOf(MainClient.username) + 1;
+				Game.setOnSetupIndexChangedDefault(() -> {
+					if (Game.getGame().getSetupIndex() == index) {
 						setup(g);
+						Game.getGame().onEndedStateChanged(() -> {
+							if (!Game.getGame().hasEnded()) {
+								setup(g);
+							}
+						});
 					}
 				});
 			}

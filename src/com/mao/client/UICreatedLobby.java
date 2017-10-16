@@ -33,7 +33,6 @@ public class UICreatedLobby implements UIState {
 
 			setup(g, player);
 			Game.getGame().onEndedStateChanged(() -> {
-				System.out.println(Game.getGame().hasEnded());
 				if (!Game.getGame().hasEnded()) {
 					setup(g, player);
 				}
