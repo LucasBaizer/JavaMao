@@ -16,6 +16,7 @@ public class UILabel extends UIObject {
 		width = (int) g.textWidth(text);
 		height = (int) g.textAscent();
 		
+		g.fill(0);
 		g.text(text, x, y);
 	}
 	

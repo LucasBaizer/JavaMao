@@ -26,7 +26,7 @@ public class UICreatedLobby implements UIState {
 			Network.initialize(new NetworkClient(80));
 
 			try {
-				Thread.sleep(2000);
+				Thread.sleep(1000);
 			} catch (InterruptedException e) {
 				Debug.error("Error while starting lobby!", e);
 			}

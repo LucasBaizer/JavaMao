@@ -18,24 +18,24 @@ public class UIJoinedLobby implements UIState {
 				}
 				Network.initialize(new NetworkClient(80));
 				try {
-					Thread.sleep(1000 * (MainClient.lobby.getJoinedUsers().indexOf(MainClient.username) + 1));
+					Thread.sleep(4000 * (MainClient.lobby.getJoinedUsers().indexOf(MainClient.username) + 1));
 				} catch (InterruptedException e) {
 					e.printStackTrace();
 				}
 
 				setup(g);
 				Game.getGame().onEndedStateChanged(() -> {
-					if(!Game.getGame().hasEnded()) {
+					if (!Game.getGame().hasEnded()) {
 						setup(g);
 					}
 				});
 			}
 		});
 	}
-	
+
 	private void setup(Processing g) {
 		g.setGameState(Processing.GAME_STATE_IN_GAME);
-		
+
 		Player player = MainClient.player = new Player().initialize(MainClient.username);
 		for (int i = 0; i < 4; i++) {
 			player.addCard(Game.getGame().getCardFromDeck());
