@@ -22,6 +22,7 @@ public class UIJoinedLobby implements UIState {
 				int index = MainClient.lobby.getJoinedUsers().indexOf(MainClient.username) + 1;
 				Game.setOnSetupIndexChangedDefault(() -> {
 					if (Game.getGame().getSetupIndex() == index) {
+						Game.getGame().incrementSetupIndex();
 						setup(g);
 						Game.getGame().onEndedStateChanged(() -> {
 							if (!Game.getGame().hasEnded()) {

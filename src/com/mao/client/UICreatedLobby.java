@@ -31,6 +31,7 @@ public class UICreatedLobby implements UIState {
 				Debug.error("Error while starting lobby!", e);
 			}
 
+			Game.getGame().incrementSetupIndex();
 			setup(g, player);
 			Game.getGame().onEndedStateChanged(() -> {
 				if (!Game.getGame().hasEnded()) {
