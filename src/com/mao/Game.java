@@ -45,12 +45,22 @@ public class Game extends NetworkedObject {
 	private Stack<Card> deck = new Stack<>();
 	private String currentPlayerUsername;
 	private boolean gameEnded;
+	private boolean gameOver;
 	private int setupIndex;
 
 	public static Game initialize(String lobbyName) {
 		Game game = new Game();
 		instances.put(lobbyName, game);
 		Network.getNetwork().registerObject(game);
+
+		if (Network.isServer()) {
+			game.onEndedStateChanged(() -> {
+				if (game.isGameOver()) {
+					instances.remove(lobbyName);
+				}
+			});
+		}
+
 		return game;
 	}
 
@@ -74,6 +84,7 @@ public class Game extends NetworkedObject {
 		}
 
 		data.write(gameEnded);
+		data.write(gameOver);
 		data.write(currentPlayerUsername);
 
 		return data;
@@ -97,6 +108,12 @@ public class Game extends NetworkedObject {
 		boolean old = gameEnded;
 		gameEnded = data.read();
 		if (old != gameEnded) {
+			onEndedStateChanged();
+		}
+
+		old = gameOver;
+		gameOver = data.read();
+		if (old != gameOver) {
 			onEndedStateChanged();
 		}
 
@@ -213,5 +230,13 @@ public class Game extends NetworkedObject {
 		if (onSetupIndexChanged != null) {
 			onSetupIndexChanged.run();
 		}
+	}
+
+	public boolean isGameOver() {
+		return gameOver;
+	}
+
+	public void setGameOver(boolean gameOver) {
+		this.gameOver = gameOver;
 	}
 }

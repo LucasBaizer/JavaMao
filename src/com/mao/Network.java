@@ -1,6 +1,7 @@
 package com.mao;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
@@ -55,25 +56,38 @@ public abstract class Network {
 	public abstract void destroy();
 
 	public void registerObject(NetworkedObject obj) {
-		List<NetworkedObject> list = networkedObjects.get(obj.getNetworkID());
-		if (list == null) {
-			ArrayList<NetworkedObject> l = new ArrayList<>();
-			networkedObjects.put(obj.getNetworkID(), l);
-			list = l;
+		synchronized (networkedObjects) {
+			List<NetworkedObject> list = networkedObjects.get(obj.getNetworkID());
+			if (list == null) {
+				ArrayList<NetworkedObject> l = new ArrayList<>();
+				networkedObjects.put(obj.getNetworkID(), l);
+				list = l;
+			}
+			list.add(obj);
 		}
-		list.add(obj);
+	}
+
+	public void deregisterObject(NetworkedObject obj) {
+		synchronized (networkedObjects) {
+			networkedObjects.get(obj.getNetworkID()).remove(obj);
+		}
 	}
 
 	public List<NetworkedObject> getObjects(int objectID) {
-		List<NetworkedObject> objects = networkedObjects.get(objectID);
-		if (objects == null) {
-			Debug.error("Attempted to get objects with ID " + objectID + ", but none were found.");
-			return new ArrayList<>();
+		synchronized (networkedObjects) {
+			List<NetworkedObject> base = networkedObjects.get(objectID);
+			List<NetworkedObject> list = base == null ? new ArrayList<>() : new ArrayList<>(base);
+			List<NetworkedObject> objects = Arrays.asList(list.toArray(new NetworkedObject[list.size()]));
+			if (objects.size() == 0) {
+				Debug.error("Attempted to get objects with ID " + objectID + ", but none were found.");
+			}
+			return objects;
 		}
-		return objects;
 	}
 
 	public Collection<List<NetworkedObject>> getRegisteredObjects() {
-		return networkedObjects.values();
+		synchronized (networkedObjects) {
+			return networkedObjects.values();
+		}
 	}
 }

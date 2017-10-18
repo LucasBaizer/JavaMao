@@ -14,6 +14,7 @@ import com.mao.Debug;
 import com.mao.Game;
 import com.mao.Lobby;
 import com.mao.Network;
+import com.mao.NetworkClient;
 import com.mao.Player;
 import com.mao.RuleHandler;
 import com.mao.lang.Code;
@@ -36,14 +37,38 @@ public class MainClient {
 			e1.printStackTrace();
 		}
 		Runtime.getRuntime().addShutdownHook(new Thread(() -> {
-			Processing.getProcessing().setGameState(-1);
-			Network.deinitialize();
 			try {
+				Processing.getProcessing().setGameState(-1);
+
+				if (lobby != null) {
+					if (lobby.getOwner().equals(username)) {
+						Game.getGame().setGameOver(true);
+						Game.getGame().update();
+						Thread.sleep(1000);
+					}
+
+					Network.deinitialize();
+					Thread.sleep(1000);
+					Network.initialize(new NetworkClient(443));
+					Thread.sleep(1000);
+
+					if (lobby.getOwner().equals(username)) {
+						lobby.end();
+					} else {
+						lobby.leave(username);
+					}
+
+					lobby.update();
+
+					Thread.sleep(1000);
+				}
+
+				Network.deinitialize();
 				Thread.sleep(1000);
+				Debug.log("Gracefully closed all connections, exiting process complete! Goodbye!");
 			} catch (InterruptedException e) {
-				Debug.error("Error while exiting game!", e);
+				e.printStackTrace();
 			}
-			Debug.log("Gracefully closed all connections, exiting process complete! Goodbye!");
 		}));
 
 		server = JOptionPane.showInputDialog("Please enter the server's IP: ").trim();

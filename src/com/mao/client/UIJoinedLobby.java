@@ -1,5 +1,7 @@
 package com.mao.client;
 
+import javax.swing.JOptionPane;
+
 import com.mao.Game;
 import com.mao.Network;
 import com.mao.NetworkClient;
@@ -31,6 +33,10 @@ public class UIJoinedLobby implements UIState {
 						});
 					}
 				});
+			} else if (MainClient.lobby.hasEnded()) {
+				Network.deinitialize();
+				JOptionPane.showMessageDialog(null, "The host ended the lobby.");
+				g.setGameState(Processing.GAME_STATE_MAIN_MENU);
 			}
 		});
 	}

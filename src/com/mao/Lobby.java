@@ -8,6 +8,7 @@ public class Lobby extends NetworkedObject {
 	private String owner;
 	private String password;
 	private boolean started;
+	private boolean ended;
 	private Runnable onUpdate;
 	private ArrayList<String> joined = new ArrayList<>();
 
@@ -33,8 +34,6 @@ public class Lobby extends NetworkedObject {
 
 	public void leave(String name) {
 		joined.remove(name);
-
-		Network.getNetwork().makeUpdate(this);
 	}
 
 	public String getName() {
@@ -53,6 +52,7 @@ public class Lobby extends NetworkedObject {
 		data.write(owner);
 		data.write(password);
 		data.write(started);
+		data.write(ended);
 		data.write(joined.size());
 		for (int i = 0; i < joined.size(); i++) {
 			data.write(joined.get(i));
@@ -68,10 +68,17 @@ public class Lobby extends NetworkedObject {
 		owner = data.read();
 		password = data.read();
 		started = data.read();
+		ended = data.read();
 
 		int joinedSize = data.read();
 		for (int i = 0; i < joinedSize; i++) {
 			joined.add(data.read());
+		}
+
+		if (Network.isServer()) {
+			if (ended) {
+				Network.getNetwork().deregisterObject(this);
+			}
 		}
 
 		if (onUpdate != null) {
@@ -97,15 +104,20 @@ public class Lobby extends NetworkedObject {
 
 	public void start() {
 		started = true;
+		ended = false;
 		Network.getNetwork().makeUpdate(this);
 	}
 
 	public void end() {
 		started = false;
-		Network.getNetwork().makeUpdate(this);
+		ended = true;
 	}
 
 	public boolean hasStarted() {
 		return started;
+	}
+
+	public boolean hasEnded() {
+		return ended;
 	}
 }

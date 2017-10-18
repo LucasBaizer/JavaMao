@@ -1,6 +1,5 @@
 package com.mao.client;
 
-import com.mao.Card;
 import com.mao.Debug;
 import com.mao.Game;
 import com.mao.Network;
@@ -45,14 +44,9 @@ public class UICreatedLobby implements UIState {
 		g.setGameState(Processing.GAME_STATE_IN_GAME);
 
 		player.initialize(MainClient.username);
-		// for (int i = 0; i < 4; i++) {
-		Card card = Card.of("two of hearts");
-		while (card.getSuit() != Game.getGame().getPlayedCards().get(Game.getGame().getPlayedCards().size() - 1)
-				.getSuit()) {
-			card = Card.getRandomCard();
+		for (int i = 0; i < 4; i++) {
+			player.addCard(Game.getGame().getCardFromDeck());
 		}
-		player.addCard(card);
-		// }
 
 		Game.getGame().setCurrentPlayerUsername(player.getUsername());
 		Debug.log("It is now " + player.getUsername() + "'s turn.");
