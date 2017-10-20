@@ -2,7 +2,7 @@ package com.mao;
 
 public class MainLobbyServer {
 	public static void main(String[] args) {
-		Network.initialize(new NetworkServer(443));
+		Network.initialize(new NetworkServer(1338));
 
 		try {
 			Debug.log("Prepared for clients to connect.");

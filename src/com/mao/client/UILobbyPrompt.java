@@ -8,7 +8,7 @@ import com.mao.NetworkClient;
 public class UILobbyPrompt implements UIState {
 	@Override
 	public void createObjects(Processing g) {
-		NetworkClient.initialize(new NetworkClient(443));
+		NetworkClient.initialize(new NetworkClient(1338));
 
 		UITextField lobby = new UITextField("Lobby password: ", 48, 10) {
 			@Override

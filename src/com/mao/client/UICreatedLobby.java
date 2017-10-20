@@ -22,7 +22,7 @@ public class UICreatedLobby implements UIState {
 			Player player = MainClient.player = new Player();
 			player.username = MainClient.username;
 
-			Network.initialize(new NetworkClient(80));
+			Network.initialize(new NetworkClient(1337));
 
 			try {
 				Thread.sleep(1000);

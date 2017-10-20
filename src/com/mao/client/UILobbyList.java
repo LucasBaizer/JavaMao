@@ -16,7 +16,7 @@ public class UILobbyList implements UIState {
 		g.addUIObject(label);
 
 		Thread thread = new Thread(() -> {
-			Network.initialize(new NetworkClient(443));
+			Network.initialize(new NetworkClient(1338));
 
 			try {
 				Thread.sleep(2500);

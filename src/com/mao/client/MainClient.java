@@ -49,7 +49,7 @@ public class MainClient {
 
 					Network.deinitialize();
 					Thread.sleep(1000);
-					Network.initialize(new NetworkClient(443));
+					Network.initialize(new NetworkClient(1338));
 					Thread.sleep(1000);
 
 					if (lobby.getOwner().equals(username)) {

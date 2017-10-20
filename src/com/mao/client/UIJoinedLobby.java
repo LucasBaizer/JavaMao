@@ -19,7 +19,7 @@ public class UIJoinedLobby implements UIState {
 					e.printStackTrace();
 				}
 
-				Network.initialize(new NetworkClient(80));
+				Network.initialize(new NetworkClient(1337));
 
 				int index = MainClient.lobby.getJoinedUsers().indexOf(MainClient.username) + 1;
 				Game.setOnSetupIndexChangedDefault(() -> {
