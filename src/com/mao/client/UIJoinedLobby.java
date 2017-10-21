@@ -8,6 +8,8 @@ import com.mao.NetworkClient;
 import com.mao.Player;
 
 public class UIJoinedLobby implements UIState {
+	private boolean setup = false;
+	
 	@Override
 	public void createObjects(Processing g) {
 		MainClient.lobby.onUpdate(() -> {
@@ -26,6 +28,10 @@ public class UIJoinedLobby implements UIState {
 				
 				int index = MainClient.lobby.getJoinedUsers().indexOf(MainClient.username) + 1;
 				Game.setOnSetupIndexChangedDefault(() -> {
+					if(setup) {
+						return;
+					}
+					setup = true;
 					if (Game.getGame().getSetupIndex() == index) {
 						Game.getGame().incrementSetupIndex();
 						setup(g);
