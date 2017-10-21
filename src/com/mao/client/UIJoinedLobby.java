@@ -18,9 +18,12 @@ public class UIJoinedLobby implements UIState {
 				} catch (InterruptedException e) {
 					e.printStackTrace();
 				}
+				
+				MainClient.player = new Player();
+				MainClient.player.username = MainClient.username;
 
 				Network.initialize(new NetworkClient(1337));
-
+				
 				int index = MainClient.lobby.getJoinedUsers().indexOf(MainClient.username) + 1;
 				Game.setOnSetupIndexChangedDefault(() -> {
 					if (Game.getGame().getSetupIndex() == index) {
@@ -44,7 +47,7 @@ public class UIJoinedLobby implements UIState {
 	private void setup(Processing g) {
 		g.setGameState(Processing.GAME_STATE_IN_GAME);
 
-		Player player = MainClient.player = new Player().initialize(MainClient.username);
+		Player player = MainClient.player.initialize(MainClient.username);
 		for (int i = 0; i < 4; i++) {
 			player.addCard(Game.getGame().getCardFromDeck());
 		}
