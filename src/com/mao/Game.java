@@ -86,6 +86,7 @@ public class Game extends NetworkedObject {
 		data.write(gameEnded);
 		data.write(gameOver);
 		data.write(currentPlayerUsername);
+		data.write(setupIndex);
 
 		return data;
 	}
@@ -128,6 +129,7 @@ public class Game extends NetworkedObject {
 			}
 		}
 
+		setupIndex = data.read();
 		if (setupIndex != 0) {
 			onSetupIndexChanged();
 		}
