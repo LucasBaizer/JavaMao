@@ -44,6 +44,49 @@ public class MenuFile extends JMenu {
 		});
 		compile.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_R, KeyEvent.CTRL_DOWN_MASK));
 
+		JMenuItem open = new JMenuItem(new AbstractAction("Open") {
+			private static final long serialVersionUID = -3591176759103540349L;
+
+			@Override
+			public void actionPerformed(ActionEvent event) {
+				JFileChooser chooser = new JFileChooser(
+						lastSaveLocation == null ? System.getProperty("user.dir") : lastSaveLocation.getParent());
+				chooser.setFileFilter(new FileFilter() {
+					@Override
+					public String getDescription() {
+						return "MSL rule rules (*.mao)";
+					}
+
+					@Override
+					public boolean accept(File file) {
+						return file.isDirectory() || file.getAbsolutePath().endsWith(".mao");
+					}
+				});
+
+				if (chooser.showOpenDialog(EditorFrame.getFrame()) == JFileChooser.APPROVE_OPTION) {
+					try {
+						File file = chooser.getSelectedFile();
+
+						EditorPanel.getPanel().getTextPane().setText(new String(Files.readAllBytes(file.toPath())));
+
+						lastSaveLocation = file;
+					} catch (IOException e) {
+						JOptionPane.showMessageDialog(null, "Failed to open: " + e.getMessage());
+					}
+				}
+
+				try {
+					EditorFrame.getFrame()
+							.setProgram(Program.compile(EditorPanel.getPanel().getTextPane().getText(), true));
+				} catch (RuntimeException e) {
+					e.printStackTrace(System.out);
+					JOptionPane.showMessageDialog(null, e.getMessage() + "\n\nPlease fix this before saving.");
+					return;
+				}
+			}
+		});
+		open.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_O, KeyEvent.CTRL_DOWN_MASK));
+
 		JMenuItem saveAs = new JMenuItem(new AbstractAction("Save As") {
 			private static final long serialVersionUID = 8475723568476220423L;
 
@@ -130,6 +173,7 @@ public class MenuFile extends JMenu {
 		save.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, KeyEvent.CTRL_DOWN_MASK));
 
 		add(compile);
+		add(open);
 		add(save);
 		add(saveAs);
 

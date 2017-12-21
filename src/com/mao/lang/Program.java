@@ -144,6 +144,9 @@ public class Program {
 		int closePos = openPos;
 		int counter = 1;
 		while (counter > 0) {
+			if (closePos + 1 == text.length) {
+				throw new CompilerError("Could not find closing bracket");
+			}
 			char c = text[++closePos];
 			if (c == '{') {
 				counter++;
